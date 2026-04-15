@@ -27,6 +27,10 @@ COLUMNS = [
     ("company.name", "Business Name"),
     ("primary_contact_name", "Contact Name"),
     ("primary_contact_title", "Contact Title"),
+    ("primary_contact_email_verified", "Contact Email (Verified)"),
+    ("primary_contact_email_guessed", "Contact Email (Guessed)"),
+    ("primary_contact_email_status", "Email Status"),
+    ("primary_contact_source_confidence", "Contact Confidence"),
     ("company.city", "City"),
     ("company.state", "State"),
     ("company.zip_code", "ZIP"),
@@ -39,6 +43,11 @@ COLUMNS = [
     ("company.google_maps_url", "Google Maps"),
     ("qualification_score", "Score"),
     ("confidence_score", "Confidence"),
+    ("website_validated", "Website Validated"),
+    ("acceptance_gate_passed", "Gate Passed"),
+    ("source_tier_best", "Best Source Tier"),
+    ("source_count", "Source Count"),
+    ("has_corroboration", "Corroborated"),
     ("company.primary_industry", "Industry"),
     ("company.employee_count_estimate", "Employees (Est.)"),
     ("company.revenue_estimate", "Revenue (Est.)"),
@@ -50,8 +59,10 @@ COLUMNS = [
     ("mutual_referral_fit", "Mutual Fit"),
     ("score_reasons", "Why It Fits"),
     ("why_not_fit", "Why It Might Not Fit"),
+    ("source_summary", "Source Summary"),
     ("estimated_fit_for_fractional_cfo", "CFO Fit"),
     ("competing_service_risk_score", "Competition Risk"),
+    ("acceptance_gate_explanation", "Gate Explanation"),
     ("exclusion_reason", "Exclusion Reason"),
     ("notes", "Notes"),
     ("source_urls_str", "Source URLs"),
@@ -61,19 +72,44 @@ COLUMNS = [
 def _extract_row(lead: LeadRecord) -> dict:
     """Extract a flat dict from a LeadRecord for export."""
     row = {}
+    pc = lead.primary_contact  # shorthand
+
     for field_path, display_name in COLUMNS:
         if field_path == "primary_contact_name":
-            row[display_name] = lead.primary_contact.name if lead.primary_contact else ""
+            row[display_name] = pc.name if pc else ""
         elif field_path == "primary_contact_title":
-            row[display_name] = lead.primary_contact.title if lead.primary_contact else ""
+            row[display_name] = pc.title if pc else ""
         elif field_path == "primary_contact_linkedin":
-            row[display_name] = lead.primary_contact.linkedin_url if lead.primary_contact else ""
+            row[display_name] = pc.linkedin_url if pc else ""
+        elif field_path == "primary_contact_email_verified":
+            # Only show email if verified status
+            if pc and pc.email and pc.email_status == "verified":
+                row[display_name] = pc.email
+            else:
+                row[display_name] = ""
+        elif field_path == "primary_contact_email_guessed":
+            # Show guessed emails separately
+            if pc and pc.email_guess:
+                row[display_name] = pc.email_guess
+            elif pc and pc.email and pc.email_status in ("guessed", "generic"):
+                row[display_name] = pc.email
+            else:
+                row[display_name] = ""
+        elif field_path == "primary_contact_email_status":
+            row[display_name] = pc.email_status if pc else "unavailable"
+        elif field_path == "primary_contact_source_confidence":
+            row[display_name] = f"{pc.contact_source_confidence:.1f}" if pc else ""
         elif field_path == "score_reasons":
             row[display_name] = " | ".join(lead.score.reasons[:5])
         elif field_path == "why_not_fit":
             row[display_name] = " | ".join(lead.why_this_might_not_be_a_fit[:3])
         elif field_path == "source_urls_str":
             row[display_name] = " | ".join(lead.source_urls[:5])
+        elif field_path == "source_summary":
+            # Which sources contributed and best tier
+            source_types = sorted(lead.evidence_source_types)
+            tier_label = {1: "Authoritative", 2: "High-Quality", 3: "Discovery"}.get(lead.source_tier_best, "Unknown")
+            row[display_name] = f"Tier {lead.source_tier_best} ({tier_label}) | {', '.join(source_types)}"
         elif "." in field_path:
             obj_name, attr = field_path.split(".", 1)
             obj = getattr(lead, obj_name, None)

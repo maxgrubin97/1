@@ -187,6 +187,7 @@ async def results_page(
     min_score: int = Query(0),
     run_id: str = Query(""),
     page_num: int = Query(1),
+    contact_filter: str = Query(""),
 ):
     """Results Explorer page."""
     db = _get_db()
@@ -205,6 +206,10 @@ async def results_page(
         offset=offset,
     )
 
+    # Apply contact-level filters in-memory (not in DB query)
+    if contact_filter:
+        leads = _apply_contact_filter(leads, contact_filter)
+
     total = db.count_leads(status=status or None, category=category or None, search_run_id=run_id or None)
     settings = get_settings()
     all_categories = [(k, settings.get_category(k).get("label", k)) for k in settings.get_all_category_keys()]
@@ -222,6 +227,7 @@ async def results_page(
         "current_sort": sort,
         "current_min_score": min_score,
         "current_run_id": run_id,
+        "current_contact_filter": contact_filter,
         "page_num": page_num,
         "per_page": per_page,
         "all_categories": all_categories,
@@ -413,6 +419,19 @@ async def history_page(request: Request):
         "page": "history",
         "runs": runs,
     })
+
+
+def _apply_contact_filter(leads: list, contact_filter: str) -> list:
+    """Apply contact-level filters to a list of leads."""
+    if contact_filter == "website_validated":
+        return [l for l in leads if l.website_validated]
+    elif contact_filter == "verified_contact":
+        return [l for l in leads if l.primary_contact and l.primary_contact.email_status == "verified"]
+    elif contact_filter == "has_guessed_email":
+        return [l for l in leads if l.primary_contact and (l.primary_contact.email_guess or l.primary_contact.email_status == "guessed")]
+    elif contact_filter == "generic_email":
+        return [l for l in leads if l.primary_contact and l.primary_contact.email_status == "generic"]
+    return leads
 
 
 @web_app.get("/settings", response_class=HTMLResponse)

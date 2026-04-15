@@ -30,6 +30,14 @@
   </div>
 </div>
 
+<!-- Acceptance Gate -->
+{% if lead.acceptance_gate_explanation %}
+<div class="card {% if lead.acceptance_gate_passed %}card-green{% else %}card-amber{% endif %}" style="margin-bottom:16px;">
+  <strong>{% if lead.acceptance_gate_passed %}Accepted{% else %}Not Accepted{% endif %}:</strong>
+  {{ lead.acceptance_gate_explanation }}
+</div>
+{% endif %}
+
 <!-- Score Summary Cards -->
 <div class="stat-row">
   <div class="stat-card {% if lead.qualification_score >= 70 %}green{% elif lead.qualification_score >= 40 %}amber{% else %}red{% endif %}">
@@ -40,11 +48,15 @@
     <div class="number">{{ lead.confidence_score }}</div>
     <div class="label">Confidence</div>
   </div>
-  {% if lead.record_type == 'referral_partner' %}
-  <div class="stat-card">
-    <div class="number">{{ lead.referral_likelihood_score }}</div>
-    <div class="label">Referral Likelihood</div>
+  <div class="stat-card {% if lead.website_validated %}green{% else %}amber{% endif %}">
+    <div class="number">{% if lead.website_validated %}Yes{% else %}No{% endif %}</div>
+    <div class="label">Website Validated</div>
   </div>
+  <div class="stat-card">
+    <div class="number">Tier {{ lead.source_tier_best }}</div>
+    <div class="label">Best Source</div>
+  </div>
+  {% if lead.record_type == 'referral_partner' %}
   <div class="stat-card {% if lead.competing_service_risk_score > 50 %}red{% endif %}">
     <div class="number">{{ lead.competing_service_risk_score }}</div>
     <div class="label">Competition Risk</div>
@@ -131,11 +143,24 @@
       <h3>Contact Information</h3>
       <table style="font-size:13px;">
         {% if lead.primary_contact %}
-        <tr><td style="font-weight:600;width:100px;">Name</td><td>{{ lead.primary_contact.name }}</td></tr>
+        <tr><td style="font-weight:600;width:120px;">Name</td><td>{{ lead.primary_contact.name }}</td></tr>
         <tr><td style="font-weight:600;">Title</td><td>{{ lead.primary_contact.title }}</td></tr>
-        {% if lead.primary_contact.linkedin_url %}<tr><td style="font-weight:600;">LinkedIn</td><td><a href="{{ lead.primary_contact.linkedin_url }}" target="_blank">Profile</a></td></tr>{% endif %}
+        <tr>
+          <td style="font-weight:600;">Email Status</td>
+          <td>
+            <span class="badge {% if lead.primary_contact.email_status == 'verified' %}badge-green{% elif lead.primary_contact.email_status == 'guessed' %}badge-amber{% elif lead.primary_contact.email_status == 'generic' %}badge-amber{% else %}badge-red{% endif %}">
+              {{ lead.primary_contact.email_status | title }}
+            </span>
+          </td>
+        </tr>
         {% if lead.primary_contact.email %}<tr><td style="font-weight:600;">Email</td><td>{{ lead.primary_contact.email }}</td></tr>{% endif %}
         {% if lead.primary_contact.email_guess %}<tr><td style="font-weight:600;">Email (Guess)</td><td class="text-muted">{{ lead.primary_contact.email_guess }}</td></tr>{% endif %}
+        {% if lead.primary_contact.linkedin_url %}<tr><td style="font-weight:600;">LinkedIn</td><td><a href="{{ lead.primary_contact.linkedin_url }}" target="_blank">Profile</a></td></tr>{% endif %}
+        <tr>
+          <td style="font-weight:600;">Source</td>
+          <td>{{ lead.primary_contact.contact_source | replace('_', ' ') | title }} (confidence: {{ '%.1f' | format(lead.primary_contact.contact_source_confidence) }})</td>
+        </tr>
+        <tr><td style="font-weight:600;">Extraction</td><td>{{ lead.primary_contact.extraction_method | replace('_', ' ') | title }}</td></tr>
         {% endif %}
         {% if lead.company.phone %}<tr><td style="font-weight:600;">Phone</td><td>{{ lead.company.phone }}</td></tr>{% endif %}
         {% if lead.company.email %}<tr><td style="font-weight:600;">Company Email</td><td>{{ lead.company.email }}</td></tr>{% endif %}
@@ -144,14 +169,29 @@
       </table>
       {% if lead.contacts | length > 1 %}
       <div class="mt-2">
-        <strong>Other Contacts:</strong>
+        <strong>Other Contacts ({{ lead.contacts | length - 1 }}):</strong>
         <ul class="text-sm">
           {% for c in lead.contacts[1:] %}
-          <li>{{ c.name }} — {{ c.title }}{% if c.linkedin_url %} (<a href="{{ c.linkedin_url }}" target="_blank">LinkedIn</a>){% endif %}</li>
+          <li>
+            {{ c.name }} — {{ c.title }}
+            <span class="badge {% if c.email_status == 'verified' %}badge-green{% elif c.email_status == 'guessed' %}badge-amber{% else %}badge-red{% endif %}" style="font-size:10px;">{{ c.email_status }}</span>
+            {% if c.linkedin_url %} (<a href="{{ c.linkedin_url }}" target="_blank">LinkedIn</a>){% endif %}
+          </li>
           {% endfor %}
         </ul>
       </div>
       {% endif %}
+    </div>
+
+    <!-- Source Quality Summary -->
+    <div class="card">
+      <h3>Source Quality</h3>
+      <table style="font-size:13px;">
+        <tr><td style="font-weight:600;width:120px;">Best Tier</td><td>Tier {{ lead.source_tier_best }} ({% if lead.source_tier_best == 1 %}Authoritative{% elif lead.source_tier_best == 2 %}High-Quality{% else %}Discovery{% endif %})</td></tr>
+        <tr><td style="font-weight:600;">Source Count</td><td>{{ lead.source_count }} distinct source type{{ 's' if lead.source_count != 1 }}</td></tr>
+        <tr><td style="font-weight:600;">Corroborated</td><td>{% if lead.has_corroboration %}Yes{% else %}No{% endif %}</td></tr>
+        <tr><td style="font-weight:600;">Website Validated</td><td>{% if lead.website_validated %}Yes{% else %}No{% endif %}</td></tr>
+      </table>
     </div>
 
     <!-- Company Details -->
@@ -168,12 +208,19 @@
 
     <!-- Evidence -->
     <div class="card">
-      <h3>Evidence</h3>
+      <h3>Evidence ({{ lead.evidence | length }} items)</h3>
       {% for e in lead.evidence %}
-      <div class="evidence-item">
-        <div class="claim">{{ e.claim }}</div>
-        {% if e.snippet %}<div class="snippet">{{ e.snippet[:200] }}</div>{% endif %}
-        {% if e.source_url %}<div class="source"><a href="{{ e.source_url }}" target="_blank">{{ e.source_type }}: {{ e.source_url[:60] }}...</a></div>{% endif %}
+      <div class="evidence-item" style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <div class="claim" style="font-weight:600;">{{ e.claim }}</div>
+        {% if e.snippet %}<div class="snippet text-sm text-muted" style="margin:2px 0;">{{ e.snippet[:200] }}</div>{% endif %}
+        <div class="text-sm" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="badge {% if e.source_tier == 1 %}badge-green{% elif e.source_tier == 2 %}badge-blue{% else %}badge-amber{% endif %}" style="font-size:10px;">
+            Tier {{ e.source_tier }}
+          </span>
+          <span style="color:var(--text-muted);">{{ e.source_type }}</span>
+          {% if e.extraction_method %}<span style="color:var(--text-muted);">via {{ e.extraction_method | replace('_', ' ') }}</span>{% endif %}
+          {% if e.source_url %}<a href="{{ e.source_url }}" target="_blank" style="font-size:11px;">{{ e.source_url[:60] }}{% if e.source_url | length > 60 %}...{% endif %}</a>{% endif %}
+        </div>
       </div>
       {% endfor %}
     </div>
