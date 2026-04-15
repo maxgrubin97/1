@@ -389,6 +389,21 @@ def _apply_no_junk_rules(
             lead.acceptance_gate_explanation = f"Rejected: {lead.exclusion_reason}"
             return "reject"
 
+    # Direct prospect complexity requirement — must show operational complexity on website
+    if lead.record_type == "direct_prospect" and signals:
+        has_complexity = bool(
+            signals.get("complexity_signals_found")
+            or (signals.get("location_count", 0) >= 2)
+            or (signals.get("leadership_depth", 0) >= 5)
+            or signals.get("multi_entity_signals")
+            or (signals.get("service_line_count", 0) >= 3)
+            or signals.get("growth_signals")
+            or signals.get("detected_triggers")
+            or (signals.get("employee_clues") and len(signals["employee_clues"]) > 0)
+        )
+        if not has_complexity and lead.has_website_evidence:
+            reasons.append("No operational complexity evidence found on website")
+
     # Competitor overlap (fractional CFO / outsourced CFO / virtual CFO services)
     competitor_terms = contains_any(
         all_text,

@@ -27,8 +27,7 @@ COLUMNS = [
     ("company.name", "Business Name"),
     ("primary_contact_name", "Contact Name"),
     ("primary_contact_title", "Contact Title"),
-    ("primary_contact_email_verified", "Contact Email (Verified)"),
-    ("primary_contact_email_guessed", "Contact Email (Guessed)"),
+    ("primary_contact_email_verified", "Contact Email"),
     ("primary_contact_email_status", "Email Status"),
     ("primary_contact_source_confidence", "Contact Confidence"),
     ("company.city", "City"),
@@ -45,6 +44,10 @@ COLUMNS = [
     ("confidence_score", "Confidence"),
     ("referral_power_score", "Referral Power"),
     ("buyer_intent_score", "Buyer Intent"),
+    ("commercial_priority_tier", "Commercial Tier"),
+    ("why_this_lead", "Why This Lead"),
+    ("why_now", "Why Now"),
+    ("outreach_angle", "Outreach Angle (Personalized)"),
     ("detected_triggers_str", "Detected Triggers"),
     ("website_validated", "Website Validated"),
     ("acceptance_gate_passed", "Gate Passed"),
@@ -85,16 +88,7 @@ def _extract_row(lead: LeadRecord) -> dict:
         elif field_path == "primary_contact_linkedin":
             row[display_name] = pc.linkedin_url if pc else ""
         elif field_path == "primary_contact_email_verified":
-            # Only show email if verified status
-            if pc and pc.email and pc.email_status == "verified":
-                row[display_name] = pc.email
-            else:
-                row[display_name] = ""
-        elif field_path == "primary_contact_email_guessed":
-            # Show guessed emails separately
-            if pc and pc.email_guess:
-                row[display_name] = pc.email_guess
-            elif pc and pc.email and pc.email_status in ("guessed", "generic"):
+            if pc and pc.email and pc.email_status in ("verified", "generic"):
                 row[display_name] = pc.email
             else:
                 row[display_name] = ""

@@ -430,14 +430,20 @@ def _apply_contact_filter(leads: list, contact_filter: str) -> list:
         return [l for l in leads if l.website_validated]
     elif contact_filter == "verified_contact":
         return [l for l in leads if l.primary_contact and l.primary_contact.email_status == "verified"]
-    elif contact_filter == "has_guessed_email":
-        return [l for l in leads if l.primary_contact and (l.primary_contact.email_guess or l.primary_contact.email_status == "guessed")]
+    elif contact_filter == "no_email":
+        return [l for l in leads if l.primary_contact and not l.primary_contact.email]
     elif contact_filter == "generic_email":
         return [l for l in leads if l.primary_contact and l.primary_contact.email_status == "generic"]
     elif contact_filter == "high_referral_power":
         return [l for l in leads if l.referral_power_score >= 70]
     elif contact_filter == "high_buyer_intent":
         return [l for l in leads if l.buyer_intent_score >= 65]
+    elif contact_filter == "commercial_tier_a":
+        return [l for l in leads if l.commercial_priority_tier == "A"]
+    elif contact_filter == "commercial_tier_b":
+        return [l for l in leads if l.commercial_priority_tier in ("A", "B")]
+    elif contact_filter == "has_triggers":
+        return [l for l in leads if l.detected_triggers]
     return leads
 
 

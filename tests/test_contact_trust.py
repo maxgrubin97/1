@@ -8,15 +8,14 @@ from app.parsers.contact_parser import (
 )
 
 
-def test_guessed_email_status():
-    """Guessed emails must get email_status = 'guessed'."""
+def test_no_email_is_unavailable():
+    """Contacts without extracted email must have email_status = 'unavailable'."""
     contact = Contact(
         name="Jane Doe",
         title="Partner",
-        email_guess="jane@example.com | jane.doe@example.com",
-        email_status="guessed",
     )
-    assert contact.email_status == "guessed"
+    assert contact.email_status == "unavailable"
+    assert contact.email == ""
 
 
 def test_generic_email_status():

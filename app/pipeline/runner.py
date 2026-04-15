@@ -86,9 +86,9 @@ class PipelineRunner:
 
         if sources is None:
             if mode == "premium":
-                sources = ["google_maps"]
+                sources = ["google_maps", "web_search"]
             elif mode == "hybrid":
-                sources = ["google_maps"] if self.settings.gmaps_api_key else ["web_search"]
+                sources = (["google_maps"] if self.settings.gmaps_api_key else []) + ["web_search"]
             else:  # no_key
                 sources = ["web_search"]
 
@@ -429,8 +429,8 @@ def _populate_review_metadata(lead: LeadRecord):
         msg = f"Possible competitor overlap (risk: {lead.competing_service_risk_score}%)"
         if msg not in lead.review_evidence_against:
             lead.review_evidence_against.append(msg)
-    if lead.primary_contact and lead.primary_contact.email_status == "guessed":
-        msg = "Only guessed email — not verified"
+    if lead.primary_contact and not lead.primary_contact.email:
+        msg = "No email found — operator will need to source"
         if msg not in lead.review_evidence_against:
             lead.review_evidence_against.append(msg)
 

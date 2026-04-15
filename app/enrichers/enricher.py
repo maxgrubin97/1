@@ -168,13 +168,6 @@ def enrich_lead(
             )
             logger.info(f"  [Enrich] Found DM via LinkedIn: {contact.name} ({contact.title})")
 
-    # --- Email pattern guessing ---
-    if lead.has_decision_maker and lead.company.website and not lead.primary_contact.email:
-        guessed = _guess_email(lead.primary_contact.name, lead.company.website)
-        if guessed:
-            lead.primary_contact.email_guess = guessed
-            lead.primary_contact.email_status = "guessed"
-
     # --- Set email_status on primary contact if it has a real email ---
     if lead.primary_contact and lead.primary_contact.email:
         if lead.primary_contact.email_status == "unavailable":
@@ -232,33 +225,6 @@ def _update_provenance_from_website(lead: LeadRecord, signals: dict, website_url
         }
 
     lead.company.field_provenance = prov
-
-
-def _guess_email(name: str, website: str) -> str:
-    """Generate likely email addresses based on name + domain."""
-    if not name or not website:
-        return ""
-
-    parts = name.strip().split()
-    if len(parts) < 2:
-        return ""
-
-    first = re.sub(r"[^a-z]", "", parts[0].lower())
-    last = re.sub(r"[^a-z]", "", parts[-1].lower())
-    if not first or not last:
-        return ""
-
-    domain = normalize_domain(website)
-    if not domain:
-        return ""
-
-    patterns = [
-        f"{first}@{domain}",
-        f"{first}.{last}@{domain}",
-        f"{first[0]}{last}@{domain}",
-        f"{first}{last[0]}@{domain}",
-    ]
-    return " | ".join(patterns)
 
 
 def _estimate_size(lead: LeadRecord, signals: dict = None) -> str:

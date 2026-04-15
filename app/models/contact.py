@@ -12,7 +12,6 @@ class Contact(BaseModel):
     name: str = ""
     title: str = ""
     email: str = ""
-    email_guess: str = ""
     phone: str = ""
     linkedin_url: str = ""
     seniority_level: str = ""       # executive, senior, mid, junior
@@ -23,7 +22,7 @@ class Contact(BaseModel):
     person_description: str = ""
 
     # --- Source trust fields (Phase 1) ---
-    email_status: str = "unavailable"       # verified | generic | guessed | unavailable
+    email_status: str = "unavailable"       # verified | generic | unavailable
     contact_source: str = ""                # website_team_page | website_about | linkedin_public | csv_import | google_maps
     contact_source_confidence: float = 0.0  # 0.0-1.0
     extraction_method: str = ""             # structured_markup | team_card | page_text | search_snippet | manual

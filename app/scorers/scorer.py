@@ -83,6 +83,12 @@ def score_lead(
     # Generate outreach intelligence for accepted/review leads
     if lead.status in ("accepted", "review_needed"):
         _generate_outreach_intelligence(lead, persona)
+        lead.why_this_lead = _generate_why_this_lead(lead, persona, website_signals)
+        lead.why_now = _generate_why_now(lead)
+        lead.outreach_angle = _generate_outreach_angle(lead, persona)
+
+    # Assign commercial priority tier
+    lead.commercial_priority_tier = _assign_commercial_tier(lead)
 
     # Assign tier — commercial scores influence tier assignment
     if lead.record_type == "referral_partner":
@@ -276,23 +282,32 @@ def _score_direct_prospect(
             complex_score = int(max_complex * 0.6)
             reasons.append(f"Some complexity signals: {', '.join(lead.complexity_flags[:2])}")
         elif lead.company.google_review_count > 50:
-            complex_score = int(max_complex * 0.4)
-            reasons.append("Significant business activity (reviews suggest scale)")
+            complex_score = min(2, int(max_complex * 0.08))  # Review count capped at 2 pts
     lead.financial_complexity_score = complex_score
     dimensions["operational_complexity"] = complex_score
 
-    # Likely revenue band
+    # Likely revenue band — prefer website signals over review count
     max_rev = sub_model.get("likely_revenue_band", 20)
     rev_score = 0
     reviews = lead.company.google_review_count or 0
-    if reviews > 200:
+    # Website-derived signals take priority
+    if signals and (signals.get("location_count", 0) >= 2 or signals.get("multi_entity_signals")):
         rev_score = max_rev
-        reasons.append("Likely $5M+ revenue (high review volume)")
-        lead.company.revenue_estimate = "$5M-$15M (est.)"
-    elif reviews > 50:
+        reasons.append("Multi-location/entity signals suggest substantial revenue")
+        lead.company.revenue_estimate = "$2M-$15M (est. from website signals)"
+    elif signals and signals.get("leadership_depth", 0) >= 5:
         rev_score = int(max_rev * 0.8)
-        reasons.append("Likely $1M-$5M revenue (moderate review volume)")
-        lead.company.revenue_estimate = "$1M-$5M (est.)"
+        reasons.append("Leadership depth suggests scale")
+        lead.company.revenue_estimate = "$1M-$5M (est. from team depth)"
+    elif signals and signals.get("employee_clues"):
+        rev_score = int(max_rev * 0.6)
+    # Review count as weak fallback (capped at 2 pts)
+    elif reviews > 200:
+        rev_score = 2
+        lead.company.revenue_estimate = "$5M+ (weak est. from reviews)"
+    elif reviews > 50:
+        rev_score = 2
+        lead.company.revenue_estimate = "$1M-$5M (weak est. from reviews)"
     elif reviews > 10:
         rev_score = int(max_rev * 0.5)
         lead.company.revenue_estimate = "$500K-$2M (est.)"
@@ -433,6 +448,11 @@ def _calculate_referral_power(lead: LeadRecord, signals: dict) -> int:
     if lead.competing_service_risk_score > 50:
         score -= 15  # Competitors don't refer
 
+    # Trigger boost for referral partners (capped at +15)
+    if lead.detected_triggers:
+        trigger_types = {t.split(":")[0].strip() for t in lead.detected_triggers}
+        score += min(15, len(trigger_types) * 5)
+
     return max(0, min(100, score))
 
 
@@ -570,6 +590,113 @@ def _generate_mutual_fit(lead: LeadRecord, outreach_angle: str) -> str:
     return " ".join(parts)
 
 
+def _generate_why_this_lead(lead: LeadRecord, persona: dict, signals: dict) -> str:
+    """Generate a specific, evidence-based reason this lead fits MGR Advisory."""
+    company = lead.company.name
+    category_label = lead.category.replace("_", " ")
+    city = lead.company.city or lead.company.state or ""
+    parts = []
+
+    if lead.record_type == "referral_partner":
+        # Build from detected signals
+        services = []
+        if signals:
+            services = signals.get("detected_services", [])
+        if lead.serves_founder_led in ("yes", "probably"):
+            parts.append(f"serving business owners")
+        if lead.boutique_fit_score >= 50:
+            parts.append("boutique size suggests relationship-driven practice")
+        if lead.competing_service_risk_score == 0:
+            parts.append("no competing CFO services")
+        desc = f"{'Boutique ' if lead.boutique_fit_score >= 50 else ''}{category_label}"
+        if city:
+            desc += f" in {city}"
+        if services:
+            desc += f" with {services[0].lower()} focus"
+        modifiers = (" — " + ", ".join(parts)) if parts else ""
+        return f"{desc}{modifiers}. Natural referral partner for clients needing financial leadership."
+    else:
+        # Direct prospect
+        if lead.complexity_flags:
+            parts.append(f"financial complexity ({', '.join(lead.complexity_flags[:2])})")
+        if signals and signals.get("location_count", 0) >= 2:
+            parts.append("multi-location operations")
+        if lead.company.is_founder_led or (lead.primary_contact and lead.primary_contact.role_category == "founder"):
+            parts.append("owner-led")
+        desc = f"{category_label.title()} business"
+        if city:
+            desc += f" in {city}"
+        modifiers = (" with " + ", ".join(parts)) if parts else ""
+        return f"{desc}{modifiers}. Likely needs fractional CFO support for financial visibility and growth planning."
+
+
+def _generate_why_now(lead: LeadRecord) -> str:
+    """Generate timing signal based on detected triggers."""
+    if not lead.detected_triggers:
+        return "No strong timing signal detected — standard outreach appropriate."
+
+    trigger_descriptions = []
+    for t in lead.detected_triggers[:3]:
+        parts = t.split(":", 1)
+        if len(parts) == 2:
+            trigger_descriptions.append(parts[1].strip())
+        else:
+            trigger_descriptions.append(t)
+
+    return f"Website mentions {', '.join(trigger_descriptions)} — likely experiencing financial complexity growth."
+
+
+def _generate_outreach_angle(lead: LeadRecord, persona: dict) -> str:
+    """Generate a one-sentence suggested approach personalized with detected signals."""
+    base_angle = persona.get("outreach_angle", "").strip()
+    # Take first sentence of the persona angle as the base
+    first_sentence = base_angle.split(".")[0].strip() if base_angle else ""
+
+    if lead.record_type == "referral_partner":
+        contact_name = lead.primary_contact.name if lead.primary_contact else "the principal"
+        if lead.detected_triggers:
+            trigger_phrase = lead.detected_triggers[0].split(":")[-1].strip()
+            return f"{first_sentence}. Their activity around {trigger_phrase} creates a natural conversation opener with {contact_name}."
+        return f"{first_sentence}. Reach out to {contact_name} to explore mutual referral opportunities."
+    else:
+        if lead.complexity_flags:
+            flag = lead.complexity_flags[0]
+            return f"Lead with how you bring financial clarity to {flag} — {lead.company.name} likely needs this as they grow."
+        if lead.detected_triggers:
+            trigger = lead.detected_triggers[0].split(":")[-1].strip()
+            return f"Their website mentions {trigger} — position yourself as the CFO who brings financial structure during growth transitions."
+        return f"{first_sentence}." if first_sentence else "Position as the fractional CFO who brings financial clarity and structure."
+
+
+def _assign_commercial_tier(lead: LeadRecord) -> str:
+    """
+    Assign commercial priority tier:
+    A: confidence >= 70 AND (referral_power >= 70 OR buyer_intent >= 65) AND named contact with confidence >= 0.5
+    B: confidence >= 55 AND (referral_power >= 50 OR buyer_intent >= 45)
+    C: everything else
+    """
+    has_good_contact = (
+        lead.primary_contact
+        and lead.primary_contact.name
+        and lead.primary_contact.contact_source_confidence >= 0.5
+    )
+
+    if lead.record_type == "referral_partner":
+        commercial_score = lead.referral_power_score
+        a_threshold = 70
+        b_threshold = 50
+    else:
+        commercial_score = lead.buyer_intent_score
+        a_threshold = 65
+        b_threshold = 45
+
+    if lead.confidence_score >= 70 and commercial_score >= a_threshold and has_good_contact:
+        return "A"
+    elif lead.confidence_score >= 55 and commercial_score >= b_threshold:
+        return "B"
+    return "C"
+
+
 def _calculate_completeness(lead: LeadRecord) -> float:
     """Calculate data completeness as a 0-1 ratio."""
     fields_to_check = [
@@ -705,11 +832,9 @@ def _calculate_confidence(lead: LeadRecord, signals: dict) -> int:
     if not lead.has_decision_maker:
         score -= 10
 
-    # Only guessed email, no verified or generic
-    if lead.primary_contact:
-        if (lead.primary_contact.email_status == "guessed"
-                and not lead.primary_contact.email):
-            score -= 5
+    # No email at all
+    if lead.primary_contact and not lead.primary_contact.email:
+        score -= 5
 
     # Conflicting category data across sources
     if signals and signals.get("competitor_signals") and signals.get("detected_services"):

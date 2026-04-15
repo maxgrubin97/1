@@ -103,6 +103,20 @@
       {% endif %}
     </div>
 
+    <!-- Commercial Intelligence -->
+    {% if lead.why_this_lead or lead.outreach_angle %}
+    <div class="card">
+      <h3>Commercial Intelligence
+        {% if lead.commercial_priority_tier %}
+        <span class="badge-tier {{ lead.commercial_priority_tier }}" style="margin-left:8px;">{{ lead.commercial_priority_tier }}</span>
+        {% endif %}
+      </h3>
+      {% if lead.why_this_lead %}<div class="mb-2"><strong>Why This Lead:</strong><br>{{ lead.why_this_lead }}</div>{% endif %}
+      {% if lead.why_now %}<div class="mb-2"><strong>Why Now:</strong><br>{{ lead.why_now }}</div>{% endif %}
+      {% if lead.outreach_angle %}<div class="mb-2"><strong>Suggested Approach:</strong><br>{{ lead.outreach_angle }}</div>{% endif %}
+    </div>
+    {% endif %}
+
     <!-- Why Might Not Fit -->
     {% if lead.why_this_might_not_be_a_fit %}
     <div class="card">
@@ -165,13 +179,12 @@
         <tr>
           <td style="font-weight:600;">Email Status</td>
           <td>
-            <span class="badge {% if lead.primary_contact.email_status == 'verified' %}badge-green{% elif lead.primary_contact.email_status == 'guessed' %}badge-amber{% elif lead.primary_contact.email_status == 'generic' %}badge-amber{% else %}badge-red{% endif %}">
+            <span class="badge {% if lead.primary_contact.email_status == 'verified' %}badge-green{% elif lead.primary_contact.email_status == 'generic' %}badge-amber{% else %}badge-red{% endif %}">
               {{ lead.primary_contact.email_status | title }}
             </span>
           </td>
         </tr>
         {% if lead.primary_contact.email %}<tr><td style="font-weight:600;">Email</td><td>{{ lead.primary_contact.email }}</td></tr>{% endif %}
-        {% if lead.primary_contact.email_guess %}<tr><td style="font-weight:600;">Email (Guess)</td><td class="text-muted">{{ lead.primary_contact.email_guess }}</td></tr>{% endif %}
         {% if lead.primary_contact.linkedin_url %}<tr><td style="font-weight:600;">LinkedIn</td><td><a href="{{ lead.primary_contact.linkedin_url }}" target="_blank">Profile</a></td></tr>{% endif %}
         <tr>
           <td style="font-weight:600;">Source</td>
@@ -191,7 +204,7 @@
           {% for c in lead.contacts[1:] %}
           <li>
             {{ c.name }} — {{ c.title }}
-            <span class="badge {% if c.email_status == 'verified' %}badge-green{% elif c.email_status == 'guessed' %}badge-amber{% else %}badge-red{% endif %}" style="font-size:10px;">{{ c.email_status }}</span>
+            <span class="badge {% if c.email_status == 'verified' %}badge-green{% elif c.email_status == 'generic' %}badge-amber{% else %}badge-red{% endif %}" style="font-size:10px;">{{ c.email_status }}</span>
             {% if c.linkedin_url %} (<a href="{{ c.linkedin_url }}" target="_blank">LinkedIn</a>){% endif %}
           </li>
           {% endfor %}

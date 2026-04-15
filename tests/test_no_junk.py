@@ -12,7 +12,7 @@ def settings():
 
 
 def test_no_website_no_evidence_rejected(settings):
-    """A record with no website, no evidence beyond Maps, and a guessed email should be rejected or reviewed."""
+    """A record with no website, no evidence beyond Maps, and no email should be rejected or reviewed."""
     lead = LeadRecord(
         record_type="direct_prospect",
         category="construction_trades",
@@ -20,8 +20,7 @@ def test_no_website_no_evidence_rejected(settings):
         primary_contact=Contact(
             name="Someone",
             title="Owner",
-            email_status="guessed",
-            email_guess="someone@unknown.com",
+            email_status="unavailable",
         ),
     )
     lead.add_evidence(claim="Found on Maps", source_type="google_maps", source_tier=3)

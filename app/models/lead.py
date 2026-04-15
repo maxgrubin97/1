@@ -55,6 +55,10 @@ class LeadRecord(BaseModel):
     referral_power_score: int = 0       # 0-100, referral partners only
     buyer_intent_score: int = 0         # 0-100, direct prospects only
     detected_triggers: list[str] = Field(default_factory=list)
+    why_this_lead: str = ""             # specific reason this fits MGR Advisory
+    why_now: str = ""                   # timing signal or "No strong timing signal detected"
+    outreach_angle: str = ""            # suggested approach based on detected signals
+    commercial_priority_tier: str = ""  # A, B, C (derived from commercial + confidence scores)
 
     # --- Direct prospect specific ---
     financial_complexity_score: int = 0

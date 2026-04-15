@@ -43,8 +43,11 @@
       <option value="website_validated" {% if current_contact_filter == 'website_validated' %}selected{% endif %}>Website Validated</option>
       <option value="high_referral_power" {% if current_contact_filter == 'high_referral_power' %}selected{% endif %}>Referral Power &ge; 70</option>
       <option value="high_buyer_intent" {% if current_contact_filter == 'high_buyer_intent' %}selected{% endif %}>Buyer Intent &ge; 65</option>
+      <option value="commercial_tier_a" {% if current_contact_filter == 'commercial_tier_a' %}selected{% endif %}>Commercial Tier A</option>
+      <option value="commercial_tier_b" {% if current_contact_filter == 'commercial_tier_b' %}selected{% endif %}>Commercial Tier B</option>
+      <option value="has_triggers" {% if current_contact_filter == 'has_triggers' %}selected{% endif %}>Has Triggers</option>
       <option value="verified_contact" {% if current_contact_filter == 'verified_contact' %}selected{% endif %}>Verified Contact</option>
-      <option value="has_guessed_email" {% if current_contact_filter == 'has_guessed_email' %}selected{% endif %}>Has Guessed Email</option>
+      <option value="no_email" {% if current_contact_filter == 'no_email' %}selected{% endif %}>No Email Found</option>
       <option value="generic_email" {% if current_contact_filter == 'generic_email' %}selected{% endif %}>Generic Email Only</option>
     </select>
     <input type="text" name="search" value="{{ current_search }}" placeholder="Search..." style="width:160px;">

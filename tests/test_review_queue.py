@@ -71,8 +71,8 @@ def test_review_metadata_has_evidence_for():
     assert "Multiple sources corroborate identity" in lead.review_evidence_for
 
 
-def test_guessed_email_noted_in_review():
-    """A record with only a guessed email should note this in review."""
+def test_no_email_noted_in_review():
+    """A record with no email should note this in review."""
     lead = LeadRecord(
         record_type="referral_partner",
         category="sba_lenders",
@@ -81,10 +81,9 @@ def test_guessed_email_noted_in_review():
         primary_contact=Contact(
             name="John",
             title="VP",
-            email_status="guessed",
-            email_guess="john@somebank.com",
+            email_status="unavailable",
         ),
     )
     _populate_review_metadata(lead)
 
-    assert any("guessed" in r.lower() for r in lead.review_evidence_against)
+    assert any("email" in r.lower() for r in lead.review_evidence_against)
