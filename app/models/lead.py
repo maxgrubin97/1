@@ -37,6 +37,14 @@ class LeadRecord(BaseModel):
     confidence_score: int = 0           # 0-100
     exclusion_reason: str = ""
 
+    # Source hierarchy + acceptance (Phase 1)
+    website_validated: bool = False             # True only if website fetched and category fit confirmed
+    acceptance_gate_passed: bool = False        # True only if mandatory acceptance conditions met
+    acceptance_gate_explanation: str = ""       # Why accepted, reviewed, or rejected
+    source_tier_best: int = 3                  # Best (lowest) source tier among all evidence
+    source_count: int = 0                      # Number of distinct sources supporting this record
+    has_corroboration: bool = False             # True if 2+ independent sources confirm category fit
+
     # Metadata
     notes: str = ""
     last_verified_at: Optional[datetime] = None
@@ -77,16 +85,32 @@ class LeadRecord(BaseModel):
     review_suggested_next_step: str = ""
 
     def add_evidence(self, claim: str, source_url: str = "", source_type: str = "",
-                     snippet: str = "", confidence: float = 0.5):
+                     snippet: str = "", confidence: float = 0.5,
+                     source_tier: int = 3, extraction_method: str = ""):
         self.evidence.append(Evidence(
             claim=claim,
             source_url=source_url,
             source_type=source_type,
             snippet=snippet,
             confidence=confidence,
+            source_tier=source_tier,
+            extraction_method=extraction_method,
         ))
         if source_url and source_url not in self.source_urls:
             self.source_urls.append(source_url)
+        self._update_source_summary()
+
+    def _update_source_summary(self):
+        """Recalculate source_tier_best, source_count, and has_corroboration from evidence."""
+        if not self.evidence:
+            return
+        self.source_tier_best = min(e.source_tier for e in self.evidence)
+        distinct_sources = {e.source_type for e in self.evidence if e.source_type}
+        self.source_count = len(distinct_sources)
+        # Corroboration: 2+ independent source types confirm category-related claims
+        category_sources = {e.source_type for e in self.evidence
+                           if e.source_type and "category" in e.claim.lower() or "fit" in e.claim.lower()}
+        self.has_corroboration = len(category_sources) >= 2 or self.source_count >= 2
 
     def set_primary_contact(self, contact: Contact):
         self.primary_contact = contact

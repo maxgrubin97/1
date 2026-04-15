@@ -13,3 +13,7 @@ class Evidence(BaseModel):
     snippet: str = ""
     confidence: float = 0.0         # 0.0 to 1.0
     collected_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # --- Source hierarchy fields (Phase 1) ---
+    source_tier: int = 3            # 1=authoritative, 2=high-quality, 3=discovery
+    extraction_method: str = ""     # how the claim was extracted

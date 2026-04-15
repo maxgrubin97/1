@@ -38,3 +38,8 @@ class Company(BaseModel):
     service_area: str = ""
     google_categories: list[str] = Field(default_factory=list)
     collected_at: Optional[datetime] = None
+
+    # --- Provenance tracking (Phase 1) ---
+    # Stores where key data points came from.
+    # Example: {"phone": {"source_url": "https://...", "source_type": "website", "confidence": 0.9, "snippet": "..."}}
+    field_provenance: dict[str, dict] = Field(default_factory=dict)
