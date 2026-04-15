@@ -3,6 +3,8 @@ __pycache__/
 *.pyo
 .env
 data/
+!data/authoritative_lists/
+!data/authoritative_lists/.gitkeep
 output/
 *.egg-info/
 dist/

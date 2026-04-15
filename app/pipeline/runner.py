@@ -22,6 +22,8 @@ from app.config.settings import Settings, get_settings
 from app.models import LeadRecord, SearchRun
 from app.collectors.google_maps import collect_from_google_maps
 from app.collectors.query_generator import generate_queries
+from app.collectors.sba_lender_collector import validate_sba_lender, collect_sba_lenders, is_available as sba_available
+from app.collectors.curated_list_collector import collect_all_curated_lists, is_available as curated_available
 from app.classifiers.classifier import classify_lead
 from app.enrichers.enricher import enrich_lead
 from app.scorers.scorer import score_lead
@@ -139,7 +141,32 @@ class PipelineRunner:
                            discovered=len(all_leads))
 
         stats["discovered"] = len(all_leads)
-        self._emit("discovering", f"Discovery complete: {len(all_leads)} candidates")
+        self._emit("discovering", f"Discovery complete: {len(all_leads)} candidates from Maps")
+
+        # --- SOURCE MERGING: Authoritative lists + curated lists ---
+        curated_leads = self._collect_from_authoritative_sources(category, locations)
+        if curated_leads:
+            # Merge by deduplicating on domain/name before adding
+            existing_domains = {normalize_domain(l.company.website) for l in all_leads if l.company.website}
+            added = 0
+            for cl in curated_leads:
+                cl_domain = normalize_domain(cl.company.website) if cl.company.website else ""
+                if cl_domain and cl_domain in existing_domains:
+                    # Cross-reference: add evidence to existing lead
+                    for lead in all_leads:
+                        if normalize_domain(lead.company.website) == cl_domain:
+                            for ev in cl.evidence:
+                                lead.evidence.append(ev)
+                            lead._update_source_summary()
+                            break
+                else:
+                    all_leads.append(cl)
+                    if cl_domain:
+                        existing_domains.add(cl_domain)
+                    added += 1
+            self._emit("discovering", f"Merged {len(curated_leads)} authoritative records ({added} new)")
+
+        stats["discovered"] = len(all_leads)
 
         if not all_leads:
             self._emit("complete", "No candidates found. Check API keys and try again.")
@@ -206,6 +233,21 @@ class PipelineRunner:
                 find_contacts=enrich_contacts,
                 delay_range=(self.settings.delay_min, self.settings.delay_max),
             )
+
+            # Cross-reference SBA lenders against authoritative list
+            if lead.category == "sba_lenders" and sba_available():
+                sba_match = validate_sba_lender(lead.company.name)
+                if sba_match:
+                    lead.add_evidence(
+                        claim=f"Confirmed active SBA lender ({sba_match.get('sba_program', 'SBA')})",
+                        source_url="data/authoritative_lists/sba_active_lenders.csv",
+                        source_type="authoritative_list",
+                        snippet=f"{sba_match['lender_name']} - {sba_match.get('sba_program', '')}",
+                        confidence=0.95,
+                        source_tier=1,
+                        extraction_method="curated_list",
+                    )
+
             enriched_data.append((lead, signals))
 
         stats["enriched"] = len(enriched_data)
@@ -279,3 +321,32 @@ class PipelineRunner:
                     stats=stats)
 
         return stats
+
+    def _collect_from_authoritative_sources(
+        self,
+        category: str,
+        locations: list[str],
+    ) -> list[LeadRecord]:
+        """Collect from authoritative list sources (SBA lenders, curated CSVs)."""
+        leads: list[LeadRecord] = []
+
+        # SBA lender list (for sba_lenders category)
+        if category == "sba_lenders" and sba_available():
+            for loc in locations:
+                # Extract state from location name
+                state = loc.strip().split(",")[-1].strip()[:2].upper() if "," in loc else "NY"
+                sba_leads = collect_sba_lenders(state=state, max_results=25)
+                leads.extend(sba_leads)
+            self._emit("discovering", f"Found {len(leads)} from SBA lender list")
+
+        # Curated directory lists (for any category)
+        if curated_available():
+            curated = collect_all_curated_lists(
+                category=category,
+                max_per_file=50,
+            )
+            leads.extend(curated)
+            if curated:
+                self._emit("discovering", f"Found {len(curated)} from curated lists")
+
+        return leads
