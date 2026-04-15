@@ -54,6 +54,12 @@ negative_weights:
     maps_category_only: -8
     wrong_market_size: -10
 
+# Runtime mode overrides — applied by settings.get_effective_thresholds()
+no_key_thresholds:
+  auto_accept_min: 85
+  auto_reject_max: 30
+  confidence_floor: 40
+
 # Precision-first: default limit per category per geography
 default_limit_per_category_geo: 25
 

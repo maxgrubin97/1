@@ -48,6 +48,31 @@ class Settings:
         # Logging
         self.log_level: str = os.getenv("LOG_LEVEL", "INFO")
 
+        # Runtime mode: premium | hybrid | no_key (auto-detected if not set)
+        explicit_mode = os.getenv("RUNTIME_MODE", "").lower()
+        if explicit_mode in ("premium", "hybrid", "no_key"):
+            self.runtime_mode: str = explicit_mode
+        else:
+            self.runtime_mode = self._detect_runtime_mode()
+
+    def _detect_runtime_mode(self) -> str:
+        """Auto-detect runtime mode from available API keys."""
+        has_gmaps = bool(self.gmaps_api_key)
+        has_serpapi = bool(self.serpapi_key)
+        if has_gmaps and has_serpapi:
+            return "premium"
+        elif has_gmaps or has_serpapi:
+            return "hybrid"
+        else:
+            return "no_key"
+
+    def get_effective_thresholds(self) -> dict:
+        """Return thresholds adjusted for runtime mode."""
+        base = dict(self.get_thresholds())
+        if self.runtime_mode == "no_key":
+            base["auto_accept_min"] = max(base.get("auto_accept_min", 80), 85)
+        return base
+
     # --- Geography helpers ---
 
     def get_locations(self, tiers: list[str] | None = None) -> list[dict]:

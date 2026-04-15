@@ -43,6 +43,9 @@ COLUMNS = [
     ("company.google_maps_url", "Google Maps"),
     ("qualification_score", "Score"),
     ("confidence_score", "Confidence"),
+    ("referral_power_score", "Referral Power"),
+    ("buyer_intent_score", "Buyer Intent"),
+    ("detected_triggers_str", "Detected Triggers"),
     ("website_validated", "Website Validated"),
     ("acceptance_gate_passed", "Gate Passed"),
     ("source_tier_best", "Best Source Tier"),
@@ -99,6 +102,8 @@ def _extract_row(lead: LeadRecord) -> dict:
             row[display_name] = pc.email_status if pc else "unavailable"
         elif field_path == "primary_contact_source_confidence":
             row[display_name] = f"{pc.contact_source_confidence:.1f}" if pc else ""
+        elif field_path == "detected_triggers_str":
+            row[display_name] = " | ".join(lead.detected_triggers[:5]) if lead.detected_triggers else ""
         elif field_path == "score_reasons":
             row[display_name] = " | ".join(lead.score.reasons[:5])
         elif field_path == "why_not_fit":

@@ -57,17 +57,34 @@
     <div class="label">Best Source</div>
   </div>
   {% if lead.record_type == 'referral_partner' %}
+  <div class="stat-card {% if lead.referral_power_score >= 70 %}green{% elif lead.referral_power_score >= 40 %}amber{% endif %}">
+    <div class="number">{{ lead.referral_power_score }}</div>
+    <div class="label">Referral Power</div>
+  </div>
   <div class="stat-card {% if lead.competing_service_risk_score > 50 %}red{% endif %}">
     <div class="number">{{ lead.competing_service_risk_score }}</div>
     <div class="label">Competition Risk</div>
   </div>
   {% else %}
+  <div class="stat-card {% if lead.buyer_intent_score >= 65 %}green{% elif lead.buyer_intent_score >= 40 %}amber{% endif %}">
+    <div class="number">{{ lead.buyer_intent_score }}</div>
+    <div class="label">Buyer Intent</div>
+  </div>
   <div class="stat-card">
     <div class="number">{{ lead.financial_complexity_score }}</div>
     <div class="label">Complexity</div>
   </div>
   {% endif %}
 </div>
+
+{% if lead.detected_triggers %}
+<div class="card" style="margin-bottom:16px;">
+  <strong>Detected Triggers:</strong>
+  {% for trigger in lead.detected_triggers %}
+  <span class="badge badge-blue" style="margin:2px;">{{ trigger }}</span>
+  {% endfor %}
+</div>
+{% endif %}
 
 <div class="detail-grid">
   <!-- Left Column -->

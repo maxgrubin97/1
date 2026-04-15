@@ -43,7 +43,12 @@
   <div class="main">
     <div class="topbar">
       <h1>{% block page_title %}Dashboard{% endblock %}</h1>
-      <div class="btn-group">
+      <div class="btn-group" style="display:flex;align-items:center;gap:8px;">
+        {% if runtime_mode %}
+        <span class="badge {% if runtime_mode == 'premium' %}badge-green{% elif runtime_mode == 'hybrid' %}badge-blue{% else %}badge-amber{% endif %}" style="font-size:11px;">
+          Mode: {{ runtime_mode | upper }}
+        </span>
+        {% endif %}
         <a href="/export-center" class="btn btn-sm">Export</a>
         <a href="/" class="btn btn-sm btn-primary">+ Run Search</a>
       </div>

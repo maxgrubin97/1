@@ -59,8 +59,8 @@ def score_lead(
     # Calculate confidence with explicit penalties
     lead.confidence_score = _calculate_confidence(lead, website_signals)
 
-    # Apply thresholds
-    thresholds = settings.get_thresholds()
+    # Apply thresholds (mode-aware: no_key uses stricter thresholds)
+    thresholds = settings.get_effective_thresholds()
     if lead.confidence_score < thresholds.get("confidence_floor", 40):
         lead.status = "review_needed"
         lead.review_evidence_against.append(f"Low confidence ({lead.confidence_score})")
@@ -74,17 +74,35 @@ def score_lead(
         else:
             lead.status = "review_needed"
 
+    # Calculate commercial scores
+    if lead.record_type == "referral_partner":
+        lead.referral_power_score = _calculate_referral_power(lead, website_signals)
+    else:
+        lead.buyer_intent_score = _calculate_buyer_intent(lead, website_signals)
+
     # Generate outreach intelligence for accepted/review leads
     if lead.status in ("accepted", "review_needed"):
         _generate_outreach_intelligence(lead, persona)
 
-    # Assign tier
-    if lead.qualification_score >= 75:
-        lead.outreach_priority_tier = "A"
-    elif lead.qualification_score >= 50:
-        lead.outreach_priority_tier = "B"
+    # Assign tier — commercial scores influence tier assignment
+    if lead.record_type == "referral_partner":
+        if lead.qualification_score >= 75 and lead.referral_power_score >= 70:
+            lead.outreach_priority_tier = "A"
+        elif lead.qualification_score >= 75 or lead.referral_power_score >= 60:
+            lead.outreach_priority_tier = "A" if lead.qualification_score >= 75 else "B"
+        elif lead.qualification_score >= 50:
+            lead.outreach_priority_tier = "B"
+        else:
+            lead.outreach_priority_tier = "C"
     else:
-        lead.outreach_priority_tier = "C"
+        if lead.qualification_score >= 75 and lead.buyer_intent_score >= 65:
+            lead.outreach_priority_tier = "A"
+        elif lead.qualification_score >= 75 or lead.buyer_intent_score >= 55:
+            lead.outreach_priority_tier = "A" if lead.qualification_score >= 75 else "B"
+        elif lead.qualification_score >= 50:
+            lead.outreach_priority_tier = "B"
+        else:
+            lead.outreach_priority_tier = "C"
 
     lead.pipeline_stage = "scored"
     return lead
@@ -361,6 +379,120 @@ def _score_direct_prospect(
         lead.why_this_might_not_be_a_fit.append("Very limited data — may be too small or inactive")
     if signals and signals.get("is_large_likely"):
         lead.why_this_might_not_be_a_fit.append("May already have internal finance team")
+
+
+def _calculate_referral_power(lead: LeadRecord, signals: dict) -> int:
+    """
+    Calculate referral power score (0-100) for referral partners.
+
+    Measures likelihood of generating referrals to MGR. Weights:
+    - Deal/financing exposure (SBA lenders, brokers see owners weekly): 30
+    - Seniority (partners refer more than associates): 25
+    - Client base overlap with MGR ICP ($1M-$20M owner-led): 25
+    - Active networking signals (boutique, relationship-driven): 20
+    """
+    score = 0
+
+    # Deal/financing exposure — categories that see business owners in transactions
+    high_exposure = {"sba_lenders", "business_brokers", "commercial_bankers", "valuation_exit_advisors"}
+    mid_exposure = {"boutique_corporate_attorneys", "boutique_cpa_firms"}
+    if lead.category in high_exposure:
+        score += 30
+    elif lead.category in mid_exposure:
+        score += 20
+    elif lead.category == "wealth_managers":
+        score += 15
+
+    # Seniority — partners and founders refer more
+    if lead.primary_contact:
+        p = lead.primary_contact.contact_priority
+        if p <= 1:
+            score += 25  # Founder/owner/managing partner
+        elif p <= 2:
+            score += 20  # Partner/director
+        elif p <= 3:
+            score += 15  # VP/specialist
+        elif p <= 5:
+            score += 5   # Associate
+
+    # Client base overlap — serves owner-led SMBs
+    if lead.serves_founder_led in ("yes",):
+        score += 25
+    elif lead.serves_founder_led in ("probably",):
+        score += 18
+    elif lead.serves_right_revenue_band in ("probably",):
+        score += 12
+    elif signals and signals.get("serves_smb"):
+        score += 10
+
+    # Networking signals — boutique, relationship-driven
+    if lead.boutique_fit_score >= 60:
+        score += 15
+    elif lead.boutique_fit_score >= 30:
+        score += 8
+    if lead.competing_service_risk_score > 50:
+        score -= 15  # Competitors don't refer
+
+    return max(0, min(100, score))
+
+
+def _calculate_buyer_intent(lead: LeadRecord, signals: dict) -> int:
+    """
+    Calculate buyer intent score (0-100) for direct prospects.
+
+    Measures likelihood of becoming a paying client at $2.5K-$5K/month. Weights:
+    - Financial complexity from website: 30
+    - Growth/expansion/financing language (triggers): 25
+    - Owner-led with no CFO/controller evidence: 25
+    - Team size suggesting $2M+ revenue: 20
+    """
+    score = 0
+
+    # Financial complexity signals
+    complexity_count = len(lead.complexity_flags)
+    if complexity_count >= 4:
+        score += 30
+    elif complexity_count >= 2:
+        score += 22
+    elif complexity_count >= 1:
+        score += 12
+
+    # Detected triggers (growth, financing, expansion)
+    trigger_count = len(lead.detected_triggers)
+    trigger_boost = min(25, trigger_count * 12)
+    score += trigger_boost
+
+    # Owner-led with no internal CFO/controller
+    is_owner_led = (
+        lead.company.is_founder_led
+        or (lead.primary_contact and lead.primary_contact.role_category == "founder")
+    )
+    has_internal_cfo = False
+    if signals:
+        cfo_terms = ["cfo", "controller", "vp finance", "finance director"]
+        emp_text = " ".join(str(v) for v in signals.values()).lower()
+        has_internal_cfo = any(t in emp_text for t in cfo_terms)
+
+    if is_owner_led and not has_internal_cfo:
+        score += 25
+    elif is_owner_led:
+        score += 10
+
+    # Team size / revenue suggesting $2M+
+    team_size = len(lead.contacts)
+    reviews = lead.company.google_review_count or 0
+    if signals and signals.get("location_count", 0) >= 2:
+        score += 20
+    elif team_size >= 8:
+        score += 18
+    elif team_size >= 4:
+        score += 12
+    elif reviews > 100:
+        score += 10
+    elif reviews > 30:
+        score += 6
+
+    return max(0, min(100, score))
 
 
 def _generate_outreach_intelligence(lead: LeadRecord, persona: dict):

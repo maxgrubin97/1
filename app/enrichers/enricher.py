@@ -182,6 +182,10 @@ def enrich_lead(
                 lead.primary_contact.email
             )
 
+    # --- Propagate detected triggers from website signals ---
+    if website_signals.get("detected_triggers"):
+        lead.detected_triggers = website_signals["detected_triggers"]
+
     # --- Company size estimation ---
     if not lead.company.employee_count_estimate:
         lead.company.employee_count_estimate = _estimate_size(lead, website_signals)

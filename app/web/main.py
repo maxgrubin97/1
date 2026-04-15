@@ -34,6 +34,9 @@ web_app = FastAPI(title="MGR Advisory Lead Engine")
 web_app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
+# Make runtime_mode available in all templates
+templates.env.globals["runtime_mode"] = get_settings().runtime_mode
+
 # Global state for active runs
 _active_runs: dict[str, dict] = {}
 
@@ -431,6 +434,10 @@ def _apply_contact_filter(leads: list, contact_filter: str) -> list:
         return [l for l in leads if l.primary_contact and (l.primary_contact.email_guess or l.primary_contact.email_status == "guessed")]
     elif contact_filter == "generic_email":
         return [l for l in leads if l.primary_contact and l.primary_contact.email_status == "generic"]
+    elif contact_filter == "high_referral_power":
+        return [l for l in leads if l.referral_power_score >= 70]
+    elif contact_filter == "high_buyer_intent":
+        return [l for l in leads if l.buyer_intent_score >= 65]
     return leads
 
 

@@ -24,6 +24,7 @@ from app.collectors.google_maps import collect_from_google_maps
 from app.collectors.query_generator import generate_queries
 from app.collectors.sba_lender_collector import validate_sba_lender, collect_sba_lenders, is_available as sba_available
 from app.collectors.curated_list_collector import collect_all_curated_lists, is_available as curated_available
+from app.collectors.web_search_collector import discover_for_category as web_search_discover
 from app.classifiers.classifier import classify_lead
 from app.enrichers.enricher import enrich_lead
 from app.scorers.scorer import score_lead
@@ -81,8 +82,15 @@ class PipelineRunner:
         Returns:
             Dict with run stats and lead IDs.
         """
+        mode = self.settings.runtime_mode
+
         if sources is None:
-            sources = ["google_maps"]
+            if mode == "premium":
+                sources = ["google_maps"]
+            elif mode == "hybrid":
+                sources = ["google_maps"] if self.settings.gmaps_api_key else ["web_search"]
+            else:  # no_key
+                sources = ["web_search"]
 
         if locations is None:
             locations = self.settings.get_location_names(["tier_1"])
@@ -140,8 +148,32 @@ class PipelineRunner:
                 self._emit("discovering", f"Found {len(leads)} from Maps: {q['query'][:60]}",
                            discovered=len(all_leads))
 
+        # Web search discovery (no_key and hybrid fallback)
+        if "web_search" in sources and not all_leads:
+            self._emit("discovering", "Discovering via web search (no API key)...")
+            try:
+                cat_config = self.settings.get_category(category)
+                search_terms = cat_config.get("search_queries", [category.replace("_", " ")])
+            except KeyError:
+                search_terms = [category.replace("_", " ")]
+
+            for loc in locations[:3]:
+                ws_leads = web_search_discover(
+                    category=category,
+                    location=loc,
+                    search_terms=search_terms[:3],
+                    max_results=limit,
+                    delay_range=(self.settings.delay_min, self.settings.delay_max),
+                )
+                all_leads.extend(ws_leads)
+                if ws_leads:
+                    self._emit("discovering", f"Found {len(ws_leads)} from web search in {loc}",
+                               discovered=len(all_leads))
+                if len(all_leads) >= limit * 3:
+                    break
+
         stats["discovered"] = len(all_leads)
-        self._emit("discovering", f"Discovery complete: {len(all_leads)} candidates from Maps")
+        self._emit("discovering", f"Discovery complete: {len(all_leads)} candidates (mode: {mode})")
 
         # --- SOURCE MERGING: Authoritative lists + curated lists ---
         curated_leads = self._collect_from_authoritative_sources(category, locations)

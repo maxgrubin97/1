@@ -164,6 +164,35 @@ def parse_website_signals(
     growth_kw = ["growing", "expansion", "new location", "hiring", "scaling", "acquisition"]
     signals["growth_signals"] = contains_any(full_text, growth_kw)
 
+    # --- Trigger detection (buyer intent signals) ---
+    trigger_categories = {
+        "growth_expansion": [
+            "expanding", "expansion", "new location", "growing team",
+            "rapid growth", "scaling", "opening new", "second location",
+            "new office", "multiple locations",
+        ],
+        "financing": [
+            "sba loan", "line of credit", "seeking funding", "capital raise",
+            "business loan", "credit facility", "financing",
+        ],
+        "acquisition_sale": [
+            "acquisition", "selling the business", "exit strategy",
+            "succession plan", "business transition", "looking to sell",
+        ],
+        "hiring": [
+            "we're hiring", "join our team", "careers", "now hiring",
+            "open positions", "job openings",
+        ],
+    }
+    detected_triggers = []
+    for trigger_type, keywords in trigger_categories.items():
+        found = contains_any(full_text, keywords)
+        for kw in found:
+            label = f"{trigger_type}: {kw}"
+            if label not in detected_triggers:
+                detected_triggers.append(label)
+    signals["detected_triggers"] = detected_triggers
+
     # Competition risk
     if competitor_keywords:
         signals["competitor_signals"] = contains_any(full_text, competitor_keywords)

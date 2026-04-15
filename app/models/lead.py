@@ -51,6 +51,11 @@ class LeadRecord(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     pipeline_stage: str = "seed"        # seed, classified, enriched, scored, final
 
+    # --- Commercial scoring ---
+    referral_power_score: int = 0       # 0-100, referral partners only
+    buyer_intent_score: int = 0         # 0-100, direct prospects only
+    detected_triggers: list[str] = Field(default_factory=list)
+
     # --- Direct prospect specific ---
     financial_complexity_score: int = 0
     likely_need_signals: list[str] = Field(default_factory=list)
