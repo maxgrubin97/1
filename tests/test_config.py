@@ -44,7 +44,7 @@ def test_scoring_weights(settings):
 
 def test_thresholds(settings):
     t = settings.get_thresholds()
-    assert t["auto_accept_min"] == 70
+    assert t["auto_accept_min"] == 80
     assert t["auto_reject_max"] == 30
     assert t["confidence_floor"] == 40
 

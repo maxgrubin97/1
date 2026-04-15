@@ -1,23 +1,22 @@
 """
 LinkedIn public profile collector.
 
-Discovers LinkedIn profiles through public Google search results ONLY.
+Discovers LinkedIn profiles through SerpAPI (paid, compliant) ONLY.
 Does NOT log into LinkedIn, bypass authentication, or scrape private data.
+Does NOT fall back to direct Google HTML scraping (brittle, non-compliant).
 
 Compliance:
-- Uses Google search with site:linkedin.com/in/ prefix
-- Only captures data visible in Google search result snippets
+- Uses SerpAPI with site:linkedin.com/in/ queries
+- Only captures data visible in search result snippets
 - Respects rate limits with configurable delays
-- Falls back to SerpAPI (paid, compliant) if configured
+- Requires SERPAPI_KEY to be configured; disabled otherwise
 """
 
 import logging
 import re
 
-from bs4 import BeautifulSoup
-
 from app.models.contact import Contact
-from app.utils.http import google_search, serpapi_search, rate_limit
+from app.utils.http import serpapi_search, rate_limit
 from app.utils.text import classify_title_seniority
 
 logger = logging.getLogger(__name__)
@@ -32,64 +31,6 @@ def _parse_linkedin_title(title: str) -> dict:
         "title": parts[1].strip() if len(parts) >= 2 else "",
         "company": parts[2].strip() if len(parts) >= 3 else "",
     }
-
-
-def _extract_linkedin_url(raw: str) -> str:
-    """Clean up a LinkedIn URL from Google results."""
-    if "linkedin.com/in/" not in raw:
-        return raw
-    # Strip Google tracking params
-    clean = raw.split("&sa=")[0].split("&ved=")[0]
-    # Handle /url?q= redirects
-    if "/url?q=" in clean:
-        clean = clean.split("/url?q=")[1].split("&")[0]
-    return clean
-
-
-def _parse_google_html(html: str) -> list[Contact]:
-    """Parse Google search results HTML for LinkedIn profiles."""
-    contacts = []
-    soup = BeautifulSoup(html, "html.parser")
-
-    for result in soup.select("div.g"):
-        try:
-            link_el = result.select_one("a[href]")
-            if not link_el:
-                continue
-            url = link_el.get("href", "")
-            if "linkedin.com/in/" not in url:
-                continue
-
-            linkedin_url = _extract_linkedin_url(url)
-
-            title_el = result.select_one("h3")
-            title_text = title_el.get_text(strip=True) if title_el else ""
-            parsed = _parse_linkedin_title(title_text)
-
-            if not parsed["name"] or len(parsed["name"]) < 2:
-                continue
-
-            seniority, role_cat, priority = classify_title_seniority(parsed["title"])
-
-            contact = Contact(
-                name=parsed["name"],
-                title=parsed["title"],
-                linkedin_url=linkedin_url,
-                seniority_level=seniority,
-                role_category=role_cat,
-                contact_priority=priority,
-                is_decision_maker=(priority <= 3),
-                source="linkedin_public",
-                person_description=parsed.get("company", ""),
-            )
-            contacts.append(contact)
-            logger.debug(f"  [LinkedIn] {contact.name} | {contact.title}")
-
-        except Exception as e:
-            logger.debug(f"Parse error: {e}")
-            continue
-
-    return contacts
 
 
 def _parse_serpapi_results(results: list[dict]) -> list[Contact]:
@@ -107,6 +48,7 @@ def _parse_serpapi_results(results: list[dict]) -> list[Contact]:
             continue
 
         seniority, role_cat, priority = classify_title_seniority(parsed["title"])
+        snippet = r.get("snippet", "")
 
         contact = Contact(
             name=parsed["name"],
@@ -118,10 +60,21 @@ def _parse_serpapi_results(results: list[dict]) -> list[Contact]:
             is_decision_maker=(priority <= 3),
             source="linkedin_public",
             person_description=parsed.get("company", ""),
+            # Phase 1 trust fields
+            email_status="unavailable",
+            contact_source="linkedin_public",
+            contact_source_confidence=0.4,
+            extraction_method="search_snippet",
+            source_snippet=snippet[:200] if snippet else "",
         )
         contacts.append(contact)
 
     return contacts
+
+
+def is_available(serpapi_key: str = "") -> bool:
+    """Check if LinkedIn discovery is available (requires SerpAPI key)."""
+    return bool(serpapi_key)
 
 
 def discover_contacts(
@@ -131,32 +84,17 @@ def discover_contacts(
     delay_range: tuple[float, float] = (3.0, 6.0),
 ) -> list[Contact]:
     """
-    Discover LinkedIn contacts via public Google search.
+    Discover LinkedIn contacts via SerpAPI.
 
-    Args:
-        query: Full search query (should include site:linkedin.com/in/).
-        serpapi_key: Optional SerpAPI key for reliable results.
-        max_results: Max results to request.
-        delay_range: Rate limiting delay range.
-
-    Returns:
-        List of Contact objects found.
+    Requires a valid SerpAPI key. Returns empty list if not configured.
+    Direct Google HTML scraping has been removed (brittle, non-compliant).
     """
-    contacts = []
+    if not serpapi_key:
+        logger.debug("[LinkedIn] Skipped: no SERPAPI_KEY configured")
+        return []
 
-    # Try SerpAPI first (more reliable, paid)
-    if serpapi_key:
-        results = serpapi_search(query, serpapi_key, num=max_results)
-        if results:
-            contacts = _parse_serpapi_results(results)
-            rate_limit(*delay_range)
-            return contacts
-
-    # Fallback to direct Google search
-    resp = google_search(query, num=max_results)
-    if resp:
-        contacts = _parse_google_html(resp.text)
-
+    results = serpapi_search(query, serpapi_key, num=max_results)
+    contacts = _parse_serpapi_results(results) if results else []
     rate_limit(*delay_range)
     return contacts
 
@@ -169,11 +107,15 @@ def find_decision_maker_for_company(
     delay_range: tuple[float, float] = (3.0, 6.0),
 ) -> Contact | None:
     """
-    Search for the decision maker at a specific company.
+    Search for the decision maker at a specific company via SerpAPI.
 
-    Uses a targeted LinkedIn search via Google.
     Returns the highest-priority contact found, or None.
+    Returns None immediately if SerpAPI key is not configured.
     """
+    if not is_available(serpapi_key):
+        logger.debug(f"[LinkedIn] Skipped for {company_name}: no SERPAPI_KEY")
+        return None
+
     if not category_titles:
         category_titles = ["CEO", "founder", "owner", "president", "managing partner"]
 

@@ -26,8 +26,8 @@ referral_partner:
 
 # Thresholds for automatic status assignment
 thresholds:
-  # Leads scoring >= this are auto-accepted
-  auto_accept_min: 70
+  # Leads scoring >= this are auto-accepted (raised from 70 for precision)
+  auto_accept_min: 80
   # Leads scoring below this are auto-rejected
   auto_reject_max: 30
   # Confidence below this sends to review_needed regardless of score

@@ -41,7 +41,7 @@ def classify_lead(
 ) -> LeadRecord:
     """
     Classify a lead record: determine type, apply exclusion filters,
-    and set initial status.
+    apply acceptance gates, and set initial status.
 
     This is the main classification entry point called during the pipeline.
     """
@@ -60,14 +60,27 @@ def classify_lead(
     if exclusion:
         lead.status = "rejected"
         lead.exclusion_reason = exclusion
+        lead.acceptance_gate_passed = False
+        lead.acceptance_gate_explanation = f"Hard exclusion: {exclusion}"
         lead.pipeline_stage = "classified"
         logger.info(f"  [Classify] REJECTED: {lead.company.name} — {exclusion}")
         return lead
+
+    # Apply no-junk rules
+    junk_result = _apply_no_junk_rules(lead, website_signals)
+    if junk_result == "reject":
+        lead.status = "rejected"
+        lead.acceptance_gate_passed = False
+        lead.pipeline_stage = "classified"
+        return lead
+    elif junk_result == "review":
+        lead.status = "review_needed"
 
     # Apply noise control rules
     noise_result = _apply_noise_control(lead, website_signals, noise_control)
     if noise_result == "reject":
         lead.status = "rejected"
+        lead.acceptance_gate_passed = False
         lead.pipeline_stage = "classified"
         return lead
     elif noise_result == "review":
@@ -75,6 +88,10 @@ def classify_lead(
 
     # Apply category-specific classification
     _apply_category_classification(lead, website_signals, settings)
+
+    # Apply acceptance gate (only after enrichment — when we have signals)
+    if website_signals:
+        _evaluate_acceptance_gate(lead, website_signals)
 
     # Set pipeline stage
     lead.pipeline_stage = "classified"
@@ -311,6 +328,166 @@ def _apply_category_classification(
 
     if signals.get("phones") and not lead.company.phone:
         lead.company.phone = signals["phones"][0]
+
+
+def _apply_no_junk_rules(
+    lead: LeadRecord,
+    signals: dict,
+) -> str:
+    """
+    Apply no-junk rejection/review rules. Returns 'accept', 'review', or 'reject'.
+
+    These rules catch records that should never pass acceptance gates regardless
+    of score — they represent structural quality problems, not just low scores.
+    """
+    reasons = []
+
+    # No real website found
+    if not lead.company.website and not lead.company.website_domain:
+        reasons.append("No website found")
+
+    # Category based only on Maps label or thin search snippet (no website evidence)
+    evidence_types = lead.evidence_source_types
+    if evidence_types and evidence_types <= {"google_maps", "directory"}:
+        if not lead.has_website_evidence:
+            reasons.append("Only Maps/directory evidence — no website validation")
+
+    # No clear business activity evidence
+    if signals:
+        has_biz_evidence = bool(
+            signals.get("detected_services")
+            or signals.get("complexity_signals_found")
+            or signals.get("description")
+            or signals.get("buying_triggers_found")
+        )
+        if not has_biz_evidence and lead.has_website_evidence:
+            reasons.append("Website fetched but no business activity evidence found")
+
+    # Obvious enterprise mismatch
+    name_lower = lead.company.name.lower()
+    all_text = ""
+    if signals:
+        all_text = " ".join(str(v) for v in signals.values()).lower()
+
+    enterprise_signals = contains_any(
+        name_lower + " " + all_text,
+        ["fortune 500", "am law 100", "big 4", "big four", "publicly traded", "nyse:", "nasdaq:"]
+    )
+    if enterprise_signals:
+        lead.exclusion_reason = f"Enterprise mismatch: {', '.join(enterprise_signals[:2])}"
+        lead.acceptance_gate_explanation = f"Rejected: {lead.exclusion_reason}"
+        return "reject"
+
+    # Obvious too-small mismatch for direct prospects
+    if lead.record_type == "direct_prospect":
+        too_small = contains_any(
+            all_text,
+            ["solopreneur", "freelancer", "one-person", "one person shop", "solo practitioner"]
+        )
+        if too_small:
+            lead.exclusion_reason = f"Too small: {', '.join(too_small[:2])}"
+            lead.acceptance_gate_explanation = f"Rejected: {lead.exclusion_reason}"
+            return "reject"
+
+    # Competitor overlap (fractional CFO / outsourced CFO / virtual CFO services)
+    competitor_terms = contains_any(
+        all_text,
+        ["fractional cfo", "outsourced cfo", "virtual cfo", "fractional controller",
+         "outsourced controller", "cfo services", "cfo advisory", "cfo as a service"]
+    )
+    if competitor_terms and lead.record_type == "referral_partner":
+        lead.competing_service_risk_score = max(lead.competing_service_risk_score, 80)
+        reasons.append(f"Possible competitor: {', '.join(competitor_terms[:2])}")
+
+    # If reasons found, route to review (not reject — these are soft signals)
+    if reasons:
+        for r in reasons:
+            if r not in lead.review_evidence_against:
+                lead.review_evidence_against.append(r)
+        if not lead.review_suggested_next_step:
+            lead.review_suggested_next_step = "Verify business legitimacy and category fit from website"
+        return "review"
+
+    return "accept"
+
+
+def _evaluate_acceptance_gate(
+    lead: LeadRecord,
+    signals: dict,
+) -> None:
+    """
+    Evaluate mandatory acceptance gates. Sets acceptance_gate_passed and
+    acceptance_gate_explanation on the lead.
+
+    A record may be ACCEPTED only if one of these is true:
+    1. Website validated AND website content shows category fit evidence.
+    2. Supported by 2+ high-confidence non-generic sources (Tier 1 or 2).
+
+    Additionally ALL accepted records must satisfy:
+    - Has a real website or equivalent Tier 1 source
+    - No major source conflicts
+    - Category fit evidenced from content, not merely from Maps label or snippet
+    - Contact is named+credible (source_confidence >= 0.5) OR marked firm-level
+    """
+    gate_reasons = []
+    passed = False
+
+    has_website = bool(lead.company.website or lead.company.website_domain)
+    has_website_evidence = lead.has_website_evidence
+    has_category_fit_from_content = bool(
+        signals.get("detected_services")
+        or signals.get("complexity_signals_found")
+        or signals.get("serves_business_owners")
+        or signals.get("serves_smb")
+    )
+
+    # Path 1: Website validated with category fit
+    website_validated = has_website_evidence and has_category_fit_from_content
+    if website_validated:
+        lead.website_validated = True
+        gate_reasons.append("Website validated with category fit evidence")
+        passed = True
+
+    # Path 2: 2+ Tier 1/2 sources corroborate
+    high_tier_sources = {e.source_type for e in lead.evidence if e.source_tier <= 2}
+    if len(high_tier_sources) >= 2:
+        gate_reasons.append(f"Corroborated by {len(high_tier_sources)} authoritative sources")
+        passed = True
+
+    # Additional mandatory checks for all accepted records
+    if passed:
+        if not has_website:
+            passed = False
+            gate_reasons.append("BLOCKED: No website found")
+
+        # Check contact quality — named and credible, or firm-level only
+        if lead.primary_contact and lead.primary_contact.name:
+            if lead.primary_contact.contact_source_confidence < 0.5:
+                # Low confidence contact — still allow if website validated
+                if not website_validated:
+                    gate_reasons.append("Contact has low source confidence and no website validation")
+        # No contact is OK if firm-level evidence is strong
+
+    # Set fields
+    lead.acceptance_gate_passed = passed
+    if passed:
+        lead.acceptance_gate_explanation = "Accepted: " + "; ".join(gate_reasons)
+        if lead.status != "rejected":
+            lead.status = "accepted"
+    else:
+        explanation_parts = gate_reasons if gate_reasons else ["No acceptance path met"]
+        missing = []
+        if not has_website:
+            missing.append("website")
+        if not has_website_evidence:
+            missing.append("website evidence")
+        if not has_category_fit_from_content:
+            missing.append("category fit from content")
+        if missing:
+            explanation_parts.append(f"Missing: {', '.join(missing)}")
+        lead.acceptance_gate_explanation = "Not accepted: " + "; ".join(explanation_parts)
+        if lead.status == "accepted":
+            lead.status = "review_needed"
 
 
 def _get_persona(category: str, record_type: str) -> dict:
