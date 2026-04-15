@@ -169,6 +169,42 @@ def parse_website_signals(
         signals["competitor_signals"] = contains_any(full_text, competitor_keywords)
         signals["is_competitor_likely"] = len(signals["competitor_signals"]) >= 2
 
+    # --- Additional signals for scoring (Phase 4) ---
+    # Location count (multi-location evidence)
+    location_patterns = [
+        r"\b(location|office|branch)(e?s)\b",
+        r"\b\d+\s+location", r"\b\d+\s+office",
+    ]
+    location_mentions = sum(len(re.findall(p, full_lower)) for p in location_patterns)
+    signals["location_count"] = location_mentions
+
+    # Service line count (complexity indicator)
+    signals["service_line_count"] = len(signals["detected_services"])
+
+    # Leadership depth (multiple partners/directors/VPs)
+    leadership_mentions = len(re.findall(
+        r"\b(partner|director|vp|vice president|principal|managing)\b",
+        full_lower,
+    ))
+    signals["leadership_depth"] = min(leadership_mentions, 20)
+
+    # Multi-entity signals
+    multi_entity_kw = [
+        "subsidiary", "subsidiaries", "portfolio company", "holding company",
+        "entity", "entities", "affiliate", "division",
+    ]
+    signals["multi_entity_signals"] = contains_any(full_text, multi_entity_kw)
+
+    # Financing / growth / acquisition language
+    finance_kw = [
+        "financing", "capital raise", "debt restructuring", "line of credit",
+        "acquisition", "merger", "equity", "investor", "fundraising",
+    ]
+    signals["financing_signals"] = contains_any(full_text, finance_kw)
+
+    # Website text length (for low-content penalty)
+    signals["website_text_length"] = len(all_text)
+
     return signals
 
 

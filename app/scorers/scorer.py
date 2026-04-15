@@ -38,7 +38,7 @@ def score_lead(
 ) -> LeadRecord:
     """
     Score a lead using category-specific sub-model weights.
-    Also generates outreach intelligence and assigns tier.
+    Also applies negative weights, generates outreach intelligence, and assigns tier.
     """
     if lead.status == "rejected":
         lead.pipeline_stage = "scored"
@@ -53,7 +53,10 @@ def score_lead(
     else:
         _score_direct_prospect(lead, website_signals, settings, sub_model)
 
-    # Calculate confidence
+    # Apply negative weights after positive scoring
+    _apply_negative_weights(lead, website_signals, settings)
+
+    # Calculate confidence with explicit penalties
     lead.confidence_score = _calculate_confidence(lead, website_signals)
 
     # Apply thresholds
@@ -63,7 +66,7 @@ def score_lead(
         lead.review_evidence_against.append(f"Low confidence ({lead.confidence_score})")
         lead.review_suggested_next_step = "Verify with additional sources"
     elif lead.status != "review_needed":
-        if lead.qualification_score >= thresholds.get("auto_accept_min", 70):
+        if lead.qualification_score >= thresholds.get("auto_accept_min", 80):
             lead.status = "accepted"
         elif lead.qualification_score <= thresholds.get("auto_reject_max", 30):
             lead.status = "rejected"
@@ -450,34 +453,151 @@ def _calculate_completeness(lead: LeadRecord) -> float:
     return sum(fields_to_check) / len(fields_to_check)
 
 
+def _apply_negative_weights(lead: LeadRecord, signals: dict, settings: Settings):
+    """Apply negative scoring weights after positive dimension scoring."""
+    penalties = lead.score.penalties
+    neg_config = {}
+    try:
+        neg_all = settings.scoring_weights.get("negative_weights", {})
+        neg_config = neg_all.get(lead.record_type, {})
+    except Exception:
+        pass
+
+    total_penalty = 0
+
+    # No website validation
+    if not lead.website_validated:
+        p = neg_config.get("no_website_validation", -10)
+        total_penalty += p
+        penalties.append(f"No website validation ({p})")
+
+    # Generic contact only
+    if lead.primary_contact and lead.primary_contact.email_status == "generic":
+        has_named = lead.primary_contact.name and lead.primary_contact.email_status != "unavailable"
+        if not has_named:
+            p = neg_config.get("generic_contact_only", -5)
+            total_penalty += p
+            penalties.append(f"Generic contact only ({p})")
+
+    # No named contact
+    if not lead.has_decision_maker:
+        p = neg_config.get("no_named_contact", -8)
+        total_penalty += p
+        penalties.append(f"No named contact ({p})")
+
+    # Likely competitor
+    if lead.competing_service_risk_score > 50:
+        p = neg_config.get("likely_competitor", -15)
+        total_penalty += p
+        penalties.append(f"Likely competitor ({p})")
+
+    # Generic directory only
+    evidence_types = lead.evidence_source_types
+    if evidence_types and evidence_types <= {"google_maps", "directory"}:
+        p = neg_config.get("generic_directory_only", -10)
+        total_penalty += p
+        penalties.append(f"Only generic directory evidence ({p})")
+
+    # Maps category only (no website-backed category fit)
+    if not lead.website_validated and "google_maps" in evidence_types:
+        if not any(e.source_type == "website" for e in lead.evidence):
+            p = neg_config.get("maps_category_only", -8)
+            total_penalty += p
+            penalties.append(f"Category from Maps only ({p})")
+
+    # Low complexity (direct prospect only)
+    if lead.record_type == "direct_prospect":
+        if signals and not signals.get("complexity_signals_found"):
+            p = neg_config.get("low_complexity_business", -5)
+            total_penalty += p
+            penalties.append(f"No complexity signals ({p})")
+
+    # Apply penalties to qualification score
+    lead.qualification_score = max(0, lead.qualification_score + total_penalty)
+    lead.score.total = lead.qualification_score
+
+
 def _calculate_confidence(lead: LeadRecord, signals: dict) -> int:
-    """Calculate confidence score (0-100) based on evidence quality."""
-    score = 20  # Base
+    """
+    Calculate confidence score (0-100) based on evidence quality.
 
-    # Evidence sources
-    source_types = lead.evidence_source_types
-    if "website" in source_types:
-        score += 25
-    if "google_maps" in source_types:
+    Uses explicit penalties for missing/weak evidence rather than
+    purely additive scoring.
+    """
+    score = 50  # Start at midpoint
+
+    # --- Positive factors ---
+
+    # Source quality (best tier)
+    if lead.source_tier_best == 1:
         score += 15
-    if "linkedin_public" in source_types:
+    elif lead.source_tier_best == 2:
         score += 10
-    if "csv_import" in source_types:
+    elif lead.source_tier_best == 3:
+        score += 0
+
+    # Corroboration
+    if lead.has_corroboration:
         score += 10
 
-    # Data quality
-    if lead.company.website:
-        score += 5
-    if lead.has_decision_maker:
+    # Website validation
+    if lead.website_validated:
         score += 10
-    if lead.company.phone or lead.company.email:
-        score += 5
-    if signals and signals.get("has_website"):
-        score += 5
+
+    # Contact source quality
+    if lead.primary_contact:
+        cc = lead.primary_contact.contact_source_confidence
+        if cc >= 0.7:
+            score += 10  # Website team page structured
+        elif cc >= 0.5:
+            score += 5   # Website team card
+        # LinkedIn snippet or lower → no bonus
+
+    # Evidence volume
     if len(lead.evidence) >= 3:
         score += 5
 
-    return min(100, score)
+    # --- Explicit penalties ---
+
+    # No website validation
+    if not lead.website_validated:
+        score -= 20
+
+    # Category inferred only from Maps or search snippet
+    evidence_types = lead.evidence_source_types
+    if evidence_types and evidence_types <= {"google_maps", "directory", "linkedin_public"}:
+        if not any(e.source_type == "website" for e in lead.evidence):
+            score -= 15
+
+    # No named contact
+    if not lead.has_decision_maker:
+        score -= 10
+
+    # Only guessed email, no verified or generic
+    if lead.primary_contact:
+        if (lead.primary_contact.email_status == "guessed"
+                and not lead.primary_contact.email):
+            score -= 5
+
+    # Conflicting category data across sources
+    if signals and signals.get("competitor_signals") and signals.get("detected_services"):
+        score -= 10
+
+    # Low-content website
+    if signals and signals.get("has_website"):
+        text_len = signals.get("website_text_length", 0)
+        if 0 < text_len < 500:
+            score -= 10
+
+    # Only generic directory evidence
+    if evidence_types and evidence_types <= {"directory"}:
+        score -= 15
+
+    # Likely competitor signals
+    if lead.competing_service_risk_score > 50:
+        score -= 10
+
+    return max(0, min(100, score))
 
 
 def _get_persona(category: str, record_type: str) -> dict:

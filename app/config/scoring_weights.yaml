@@ -34,6 +34,26 @@ thresholds:
   confidence_floor: 40
   # Records between reject and accept thresholds go to review_needed
 
+# Negative weights — applied after positive dimension scoring
+negative_weights:
+  direct_prospect:
+    no_website_validation: -10
+    generic_contact_only: -5
+    no_named_contact: -8
+    likely_competitor: -15
+    generic_directory_only: -10
+    maps_category_only: -8
+    low_complexity_business: -5
+    wrong_market_size: -10
+  referral_partner:
+    no_website_validation: -10
+    generic_contact_only: -5
+    no_named_contact: -8
+    likely_competitor: -15
+    generic_directory_only: -10
+    maps_category_only: -8
+    wrong_market_size: -10
+
 # Precision-first: default limit per category per geography
 default_limit_per_category_geo: 25
 
