@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — MGR Advisory Lead Engine{% endblock %}
+{% block page_title %}Run Search{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+  <!-- Search Control -->
+  <div class="card">
+    <h3>Search Setup</h3>
+    <form method="post" action="/run">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" id="category-select" required>
+            <optgroup label="Referral Partners">
+              {% for key, label in categories_rp %}
+              <option value="{{ key }}">{{ label }}</option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label="Direct Prospects">
+              {% for key, label in categories_dp %}
+              <option value="{{ key }}">{{ label }}</option>
+              {% endfor %}
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Record Limit</label>
+          <input type="number" name="limit" value="25" min="5" max="200">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Geography</label>
+        <select name="geo" id="geo-select">
+          <option value="">All Tier 1 (NYC, Long Island, Westchester)</option>
+          {% for loc in locations %}
+          <option value="{{ loc }}">{{ loc }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="enrich" value="true" checked> Enrich contacts on first pass</label>
+      </div>
+      <div class="btn-group mt-4">
+        <button type="submit" class="btn btn-primary">Run Search</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Saved Presets -->
+  <div class="card">
+    <h3>Quick Presets</h3>
+    <div class="preset-grid">
+      {% for preset in presets %}
+      <form method="post" action="/run" style="margin:0;">
+        <input type="hidden" name="category" value="{{ preset.config.category }}">
+        <input type="hidden" name="geo" value="{{ preset.config.get('geo', '') }}">
+        <input type="hidden" name="limit" value="{{ preset.config.get('limit', 25) }}">
+        <input type="hidden" name="enrich" value="true">
+        <button type="submit" class="preset-card">
+          {{ preset.name }}
+        </button>
+      </form>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Runs -->
+  {% if recent_runs %}
+  <div class="card">
+    <h3>Recent Runs</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Geography</th>
+            <th>Date</th>
+            <th>Accepted</th>
+            <th>Review</th>
+            <th>Rejected</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in recent_runs %}
+          <tr>
+            <td>{{ run.category }}</td>
+            <td class="truncate">{{ run.geography }}</td>
+            <td class="text-muted">{{ run.started_at[:16] if run.started_at else '' }}</td>
+            <td><span class="badge badge-green">{{ run.results_accepted }}</span></td>
+            <td><span class="badge badge-amber">{{ run.results_review }}</span></td>
+            <td><span class="badge badge-red">{{ run.results_rejected }}</span></td>
+            <td><a href="/results?run_id={{ run.id }}&status=accepted" class="btn btn-sm">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

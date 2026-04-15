@@ -1,0 +1,355 @@
+# Category definitions for lead sourcing.
+# Each category defines search queries, modifiers, and classification hints.
+
+referral_partners:
+  sba_lenders:
+    label: "SBA Lenders"
+    record_type: referral_partner
+    likely_referral_type: sba_lender
+    search_queries:
+      - "SBA lender"
+      - "SBA lending"
+      - "SBA 7a loan"
+      - "SBA 504 loan"
+      - "small business lending bank"
+      - "commercial lender small business"
+      - "business banking relationship manager"
+    modifiers:
+      - "small business"
+      - "SBA preferred lender"
+      - "business loan"
+    priority_titles:
+      - "VP SBA Lending"
+      - "SBA Lender"
+      - "Business Development Officer"
+      - "Relationship Manager"
+      - "Commercial Lender"
+      - "VP Commercial Lending"
+      - "Business Banking"
+      - "Senior Vice President"
+    exclude_if:
+      - "mortgage only"
+      - "personal loan"
+      - "auto loan"
+
+  business_brokers:
+    label: "Business Brokers"
+    record_type: referral_partner
+    likely_referral_type: broker
+    search_queries:
+      - "business broker"
+      - "business for sale broker"
+      - "M&A advisor small business"
+      - "sell my business advisor"
+      - "lower middle market M&A"
+      - "main street business broker"
+    modifiers:
+      - "sell side"
+      - "business sale"
+      - "lower middle market"
+      - "privately held"
+      - "owner transition"
+    priority_titles:
+      - "Founder"
+      - "Managing Director"
+      - "Principal"
+      - "Senior Advisor"
+      - "Licensed Broker"
+      - "M&A Advisor"
+      - "Business Intermediary"
+      - "Partner"
+    exclude_if:
+      - "real estate agent"
+      - "residential realtor"
+
+  boutique_corporate_attorneys:
+    label: "Boutique Corporate Attorneys"
+    record_type: referral_partner
+    likely_referral_type: legal
+    search_queries:
+      - "business attorney"
+      - "corporate attorney small business"
+      - "business law firm"
+      - "corporate law firm"
+      - "M&A attorney small business"
+      - "transaction attorney"
+      - "commercial attorney"
+      - "business formation attorney"
+    modifiers:
+      - "mergers acquisitions"
+      - "corporate"
+      - "transactional"
+      - "commercial"
+      - "business law"
+      - "entity formation"
+      - "buy sell agreement"
+    priority_titles:
+      - "Partner"
+      - "Managing Partner"
+      - "Founding Partner"
+      - "Of Counsel"
+      - "Principal"
+      - "Senior Associate"
+    exclude_if:
+      - "personal injury"
+      - "criminal defense"
+      - "immigration"
+      - "matrimonial"
+      - "family law"
+      - "traffic violations"
+    exclude_firm_signals:
+      - "Am Law 100"
+      - "Am Law 200"
+      - "500+ attorneys"
+
+  boutique_cpa_firms:
+    label: "Boutique CPA / Tax Firms"
+    record_type: referral_partner
+    likely_referral_type: cpa
+    search_queries:
+      - "CPA firm small business"
+      - "accounting firm business advisory"
+      - "tax advisor business owners"
+      - "CPA entrepreneur"
+      - "small business accountant"
+      - "business tax planning"
+    modifiers:
+      - "business advisory"
+      - "tax planning"
+      - "small business"
+      - "business owner"
+    priority_titles:
+      - "Managing Partner"
+      - "Partner"
+      - "Founder"
+      - "Principal"
+      - "Director"
+    exclude_if:
+      - "Big 4"
+      - "Deloitte"
+      - "PwC"
+      - "Ernst Young"
+      - "KPMG"
+      - "outsourced CFO"
+      - "fractional CFO"
+      - "virtual CFO"
+
+  wealth_managers:
+    label: "Wealth Managers / RIAs"
+    record_type: referral_partner
+    likely_referral_type: wealth
+    search_queries:
+      - "wealth manager business owners"
+      - "wealth advisor entrepreneur"
+      - "RIA small business"
+      - "financial advisor business owner"
+      - "private wealth advisor"
+      - "exit planning advisor"
+    modifiers:
+      - "entrepreneur"
+      - "business owners"
+      - "liquidity event"
+      - "exit planning"
+      - "succession"
+    priority_titles:
+      - "Managing Director"
+      - "Senior Wealth Advisor"
+      - "Partner"
+      - "Founder"
+      - "Principal"
+      - "Financial Advisor"
+    exclude_if:
+      - "retail financial advisor"
+      - "insurance agent only"
+
+  commercial_bankers:
+    label: "Commercial Bankers (SMB Focus)"
+    record_type: referral_partner
+    likely_referral_type: banker
+    search_queries:
+      - "commercial banker small business"
+      - "business banking officer"
+      - "community bank business lending"
+      - "commercial loan officer"
+    modifiers:
+      - "small business"
+      - "commercial"
+      - "business banking"
+    priority_titles:
+      - "VP Commercial Lending"
+      - "Relationship Manager"
+      - "Business Banking Officer"
+      - "Commercial Loan Officer"
+      - "Senior Vice President"
+    exclude_if: []
+
+  valuation_exit_advisors:
+    label: "Valuation / Exit Planning Advisors"
+    record_type: referral_partner
+    likely_referral_type: valuation
+    search_queries:
+      - "business valuation advisor"
+      - "exit planning consultant"
+      - "business exit strategy"
+      - "succession planning advisor"
+      - "business valuation firm"
+    modifiers:
+      - "small business"
+      - "privately held"
+      - "owner transition"
+      - "business succession"
+    priority_titles:
+      - "Founder"
+      - "Managing Director"
+      - "Principal"
+      - "Senior Advisor"
+      - "Partner"
+    exclude_if: []
+
+direct_prospects:
+  construction_trades:
+    label: "Construction & Skilled Trades"
+    record_type: direct_prospect
+    primary_industry: "Construction / Trades"
+    search_queries:
+      - "construction company"
+      - "general contractor"
+      - "plumbing company"
+      - "HVAC company"
+      - "electrical contractor"
+      - "roofing company"
+      - "concrete company"
+      - "demolition company"
+      - "painting contractor commercial"
+      - "fire protection company"
+      - "mechanical contractor"
+    modifiers:
+      - "commercial"
+      - "residential"
+      - "licensed"
+      - "union"
+    complexity_signals:
+      - "job costing"
+      - "project management"
+      - "commercial contracts"
+      - "bonding"
+      - "multiple crews"
+      - "fleet"
+
+  healthcare_practices:
+    label: "Healthcare Practices"
+    record_type: direct_prospect
+    primary_industry: "Healthcare"
+    search_queries:
+      - "dental practice"
+      - "medical practice"
+      - "dermatology practice"
+      - "physical therapy clinic"
+      - "urgent care center"
+      - "veterinary clinic"
+      - "optometry practice"
+      - "chiropractic office"
+      - "mental health practice"
+      - "medical billing company"
+      - "home health care agency"
+    modifiers:
+      - "multi-location"
+      - "group practice"
+    complexity_signals:
+      - "multiple locations"
+      - "group practice"
+      - "billing"
+      - "insurance"
+      - "compliance"
+
+  professional_services:
+    label: "Professional Services Firms"
+    record_type: direct_prospect
+    primary_industry: "Professional Services"
+    search_queries:
+      - "architecture firm"
+      - "engineering firm"
+      - "surveying company"
+      - "environmental consulting"
+      - "IT consulting firm"
+      - "management consulting firm"
+      - "staffing agency"
+      - "recruiting firm"
+      - "public relations firm"
+      - "design studio"
+    modifiers:
+      - "boutique"
+      - "small"
+    complexity_signals:
+      - "project-based"
+      - "retainer"
+      - "multiple clients"
+      - "utilization"
+
+  real_estate_operations:
+    label: "Real Estate Operating Businesses"
+    record_type: direct_prospect
+    primary_industry: "Real Estate"
+    search_queries:
+      - "property management company"
+      - "real estate development company"
+      - "real estate investment company"
+      - "commercial real estate firm"
+      - "facility management company"
+      - "building maintenance company"
+    modifiers:
+      - "commercial"
+      - "residential"
+      - "multi-family"
+    complexity_signals:
+      - "multiple properties"
+      - "portfolio"
+      - "investors"
+      - "development"
+      - "entity structure"
+
+  agencies_consultancies:
+    label: "Agencies & B2B Services"
+    record_type: direct_prospect
+    primary_industry: "Business Services"
+    search_queries:
+      - "marketing agency"
+      - "digital marketing agency"
+      - "advertising agency"
+      - "creative agency"
+      - "branding agency"
+      - "web development agency"
+      - "SEO agency"
+      - "social media agency"
+    modifiers:
+      - "boutique"
+      - "full service"
+    complexity_signals:
+      - "retainer clients"
+      - "project-based"
+      - "multiple offices"
+      - "growing team"
+
+  multi_location_services:
+    label: "Multi-Location Service Businesses"
+    record_type: direct_prospect
+    primary_industry: "Multi-Location Services"
+    search_queries:
+      - "cleaning company commercial"
+      - "landscaping company commercial"
+      - "security guard company"
+      - "pest control company"
+      - "moving company"
+      - "auto body shop"
+      - "car wash"
+      - "laundromat chain"
+      - "fitness studio"
+      - "daycare center"
+    modifiers:
+      - "commercial"
+      - "franchise"
+    complexity_signals:
+      - "multiple locations"
+      - "franchise"
+      - "fleet"
+      - "employees"

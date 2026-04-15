@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}{{ lead.company.name }} — MGR Advisory{% endblock %}
+{% block page_title %}Lead Detail{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="detail-header">
+  <div>
+    <h1>{{ lead.company.name or 'Unknown Company' }}</h1>
+    <p class="text-muted">
+      {{ lead.primary_contact.name if lead.primary_contact else '' }}
+      {% if lead.primary_contact and lead.primary_contact.title %} &middot; {{ lead.primary_contact.title }}{% endif %}
+      &middot; {{ lead.company.city }}{% if lead.company.state %}, {{ lead.company.state }}{% endif %}
+    </p>
+    <div class="mt-2 flex gap-2">
+      <span class="badge {% if lead.status == 'accepted' %}badge-green{% elif lead.status == 'review_needed' %}badge-amber{% else %}badge-red{% endif %}">
+        {{ lead.status | replace('_', ' ') | title }}
+      </span>
+      {% if lead.outreach_priority_tier %}
+      <span class="badge-tier {{ lead.outreach_priority_tier }}">{{ lead.outreach_priority_tier }}</span>
+      {% endif %}
+      <span class="badge badge-blue">{{ lead.category | replace('_', ' ') | title }}</span>
+      <span class="badge badge-blue">{{ lead.record_type | replace('_', ' ') | title }}</span>
+    </div>
+  </div>
+  <div class="btn-group">
+    {% if lead.company.website %}<a href="{{ lead.company.website }}" target="_blank" class="btn btn-sm">Website</a>{% endif %}
+    {% if lead.primary_contact and lead.primary_contact.linkedin_url %}<a href="{{ lead.primary_contact.linkedin_url }}" target="_blank" class="btn btn-sm">LinkedIn</a>{% endif %}
+    {% if lead.company.google_maps_url %}<a href="{{ lead.company.google_maps_url }}" target="_blank" class="btn btn-sm">Maps</a>{% endif %}
+  </div>
+</div>
+
+<!-- Score Summary Cards -->
+<div class="stat-row">
+  <div class="stat-card {% if lead.qualification_score >= 70 %}green{% elif lead.qualification_score >= 40 %}amber{% else %}red{% endif %}">
+    <div class="number">{{ lead.qualification_score }}</div>
+    <div class="label">Score</div>
+  </div>
+  <div class="stat-card">
+    <div class="number">{{ lead.confidence_score }}</div>
+    <div class="label">Confidence</div>
+  </div>
+  {% if lead.record_type == 'referral_partner' %}
+  <div class="stat-card">
+    <div class="number">{{ lead.referral_likelihood_score }}</div>
+    <div class="label">Referral Likelihood</div>
+  </div>
+  <div class="stat-card {% if lead.competing_service_risk_score > 50 %}red{% endif %}">
+    <div class="number">{{ lead.competing_service_risk_score }}</div>
+    <div class="label">Competition Risk</div>
+  </div>
+  {% else %}
+  <div class="stat-card">
+    <div class="number">{{ lead.financial_complexity_score }}</div>
+    <div class="label">Complexity</div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="detail-grid">
+  <!-- Left Column -->
+  <div>
+    <!-- Why This Is a Fit -->
+    <div class="card">
+      <h3>Why This Is a Fit</h3>
+      {% if lead.score.reasons %}
+      <ul>
+        {% for reason in lead.score.reasons %}
+        <li>{{ reason }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted">No fit signals detected yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Why Might Not Fit -->
+    {% if lead.why_this_might_not_be_a_fit %}
+    <div class="card">
+      <h3>Why This Might Not Be a Fit</h3>
+      <ul>
+        {% for concern in lead.why_this_might_not_be_a_fit %}
+        <li class="text-amber">{{ concern }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Score Breakdown -->
+    <div class="card">
+      <h3>Score Breakdown</h3>
+      {% for dim, val in lead.score.dimensions.items() %}
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span>{{ dim | replace('_', ' ') | title }}</span>
+        <span style="font-weight:600;">{{ val }}</span>
+      </div>
+      {% endfor %}
+      {% if lead.score.penalties %}
+      <div class="mt-2">
+        <strong class="text-red">Penalties:</strong>
+        <ul>
+          {% for p in lead.score.penalties %}
+          <li class="text-red text-sm">{{ p }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Outreach Intelligence -->
+    {% if lead.primary_outreach_angle %}
+    <div class="card">
+      <h3>Outreach Guidance</h3>
+      <div class="mb-2"><strong>Primary Angle:</strong><br>{{ lead.primary_outreach_angle }}</div>
+      {% if lead.likely_pain_point %}<div class="mb-2"><strong>Likely Pain Point:</strong><br>{{ lead.likely_pain_point }}</div>{% endif %}
+      {% if lead.likely_referral_reason %}<div class="mb-2"><strong>Referral Reason:</strong><br>{{ lead.likely_referral_reason }}</div>{% endif %}
+      {% if lead.mutual_referral_fit %}<div class="mb-2"><strong>Mutual Fit:</strong><br>{{ lead.mutual_referral_fit }}</div>{% endif %}
+      {% if lead.recommended_contact_order %}
+      <div class="mb-2"><strong>Recommended Contact Order:</strong>
+        <ol>{% for c in lead.recommended_contact_order %}<li>{{ c }}</li>{% endfor %}</ol>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Right Column -->
+  <div>
+    <!-- Contact Info -->
+    <div class="card">
+      <h3>Contact Information</h3>
+      <table style="font-size:13px;">
+        {% if lead.primary_contact %}
+        <tr><td style="font-weight:600;width:100px;">Name</td><td>{{ lead.primary_contact.name }}</td></tr>
+        <tr><td style="font-weight:600;">Title</td><td>{{ lead.primary_contact.title }}</td></tr>
+        {% if lead.primary_contact.linkedin_url %}<tr><td style="font-weight:600;">LinkedIn</td><td><a href="{{ lead.primary_contact.linkedin_url }}" target="_blank">Profile</a></td></tr>{% endif %}
+        {% if lead.primary_contact.email %}<tr><td style="font-weight:600;">Email</td><td>{{ lead.primary_contact.email }}</td></tr>{% endif %}
+        {% if lead.primary_contact.email_guess %}<tr><td style="font-weight:600;">Email (Guess)</td><td class="text-muted">{{ lead.primary_contact.email_guess }}</td></tr>{% endif %}
+        {% endif %}
+        {% if lead.company.phone %}<tr><td style="font-weight:600;">Phone</td><td>{{ lead.company.phone }}</td></tr>{% endif %}
+        {% if lead.company.email %}<tr><td style="font-weight:600;">Company Email</td><td>{{ lead.company.email }}</td></tr>{% endif %}
+        {% if lead.company.website %}<tr><td style="font-weight:600;">Website</td><td><a href="{{ lead.company.website }}" target="_blank">{{ lead.company.website_domain }}</a></td></tr>{% endif %}
+        {% if lead.company.address %}<tr><td style="font-weight:600;">Address</td><td>{{ lead.company.address }}</td></tr>{% endif %}
+      </table>
+      {% if lead.contacts | length > 1 %}
+      <div class="mt-2">
+        <strong>Other Contacts:</strong>
+        <ul class="text-sm">
+          {% for c in lead.contacts[1:] %}
+          <li>{{ c.name }} — {{ c.title }}{% if c.linkedin_url %} (<a href="{{ c.linkedin_url }}" target="_blank">LinkedIn</a>){% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Company Details -->
+    <div class="card">
+      <h3>Company Details</h3>
+      <table style="font-size:13px;">
+        <tr><td style="font-weight:600;width:120px;">Industry</td><td>{{ lead.company.primary_industry }}</td></tr>
+        {% if lead.company.employee_count_estimate %}<tr><td style="font-weight:600;">Employees</td><td>{{ lead.company.employee_count_estimate }}</td></tr>{% endif %}
+        {% if lead.company.revenue_estimate %}<tr><td style="font-weight:600;">Revenue</td><td>{{ lead.company.revenue_estimate }}</td></tr>{% endif %}
+        {% if lead.company.google_rating %}<tr><td style="font-weight:600;">Google Rating</td><td>{{ lead.company.google_rating }} ({{ lead.company.google_review_count }} reviews)</td></tr>{% endif %}
+        {% if lead.estimated_fit_for_fractional_cfo %}<tr><td style="font-weight:600;">CFO Fit</td><td>{{ lead.estimated_fit_for_fractional_cfo | title }}</td></tr>{% endif %}
+      </table>
+    </div>
+
+    <!-- Evidence -->
+    <div class="card">
+      <h3>Evidence</h3>
+      {% for e in lead.evidence %}
+      <div class="evidence-item">
+        <div class="claim">{{ e.claim }}</div>
+        {% if e.snippet %}<div class="snippet">{{ e.snippet[:200] }}</div>{% endif %}
+        {% if e.source_url %}<div class="source"><a href="{{ e.source_url }}" target="_blank">{{ e.source_type }}: {{ e.source_url[:60] }}...</a></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Actions & Notes -->
+    <div class="card">
+      <h3>Actions & Notes</h3>
+      <div class="btn-group mb-4">
+        <form method="post" action="/lead/{{ lead.id }}/action" style="display:inline;">
+          <input type="hidden" name="action" value="{% if starred %}unstar{% else %}star{% endif %}">
+          <button type="submit" class="btn btn-sm">{% if starred %}Unstar{% else %}Star{% endif %}</button>
+        </form>
+        <form method="post" action="/lead/{{ lead.id }}/action" style="display:inline;">
+          <input type="hidden" name="action" value="{% if marked_for_outreach %}unoutreach{% else %}outreach{% endif %}">
+          <button type="submit" class="btn btn-sm btn-green">{% if marked_for_outreach %}Remove from Outreach{% else %}Mark for Outreach{% endif %}</button>
+        </form>
+        <form method="post" action="/lead/{{ lead.id }}/action" style="display:inline;">
+          <input type="hidden" name="action" value="accept">
+          <button type="submit" class="btn btn-sm btn-primary">Accept</button>
+        </form>
+        <form method="post" action="/lead/{{ lead.id }}/action" style="display:inline;">
+          <input type="hidden" name="action" value="reject">
+          <button type="submit" class="btn btn-sm btn-red">Reject</button>
+        </form>
+      </div>
+      <form method="post" action="/lead/{{ lead.id }}/action">
+        <input type="hidden" name="action" value="save_notes">
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea name="notes" rows="4" placeholder="Add outreach notes, follow-up reminders...">{{ notes }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-sm">Save Notes</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

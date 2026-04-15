@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Run Progress — MGR Advisory{% endblock %}
+{% block page_title %}Search Progress{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+  <div class="card" id="progress-card">
+    <h3>{{ run.get('category', 'Search') | replace('_', ' ') | title }}</h3>
+    <p class="text-muted">{{ run.get('geo', 'All Tier 1') }} &middot; Limit: {{ run.get('limit', 25) }}</p>
+
+    <div class="mt-4">
+      <div id="stage-text" style="font-weight:600;">{{ run.get('stage', 'Starting...') }}</div>
+      <div id="message-text" class="text-muted text-sm">{{ run.get('message', '') }}</div>
+      <div class="progress-bar-outer mt-2">
+        <div class="progress-bar-inner" id="progress-bar" style="width: 10%"></div>
+      </div>
+    </div>
+
+    <div class="stat-row mt-4" id="stats-row">
+      <div class="stat-card"><div class="number" id="stat-discovered">0</div><div class="label">Discovered</div></div>
+      <div class="stat-card green"><div class="number" id="stat-accepted">0</div><div class="label">Accepted</div></div>
+      <div class="stat-card amber"><div class="number" id="stat-review">0</div><div class="label">Review</div></div>
+      <div class="stat-card red"><div class="number" id="stat-rejected">0</div><div class="label">Rejected</div></div>
+    </div>
+
+    <div class="btn-group mt-4" id="action-buttons" style="display:none;">
+      <a href="/results?run_id={{ run_id }}&status=accepted" class="btn btn-primary">View Results</a>
+      <a href="/results?run_id={{ run_id }}&status=review_needed" class="btn">View Review Queue</a>
+      <a href="/" class="btn">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div class="log-panel" id="log-panel">
+    {% for line in run.get('log', []) %}
+    <div class="log-line">{{ line }}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const runId = "{{ run_id }}";
+const stageMap = {
+  "discovering": 20, "filtering": 30, "classifying": 40,
+  "enriching": 60, "scoring": 75, "deduplicating": 85,
+  "saving": 95, "complete": 100, "start": 5,
+};
+
+function poll() {
+  fetch(`/api/progress/${runId}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("stage-text").textContent = data.stage || "";
+      document.getElementById("message-text").textContent = data.message || "";
+
+      const pct = stageMap[data.stage] || 10;
+      document.getElementById("progress-bar").style.width = pct + "%";
+
+      const stats = data.stats || {};
+      if (stats.discovered !== undefined) document.getElementById("stat-discovered").textContent = stats.discovered;
+      if (stats.accepted !== undefined) document.getElementById("stat-accepted").textContent = stats.accepted;
+      if (stats.review !== undefined) document.getElementById("stat-review").textContent = stats.review;
+      if (stats.rejected !== undefined) document.getElementById("stat-rejected").textContent = stats.rejected;
+
+      const logPanel = document.getElementById("log-panel");
+      logPanel.innerHTML = (data.log || []).map(l => `<div class="log-line">${l}</div>`).join("");
+      logPanel.scrollTop = logPanel.scrollHeight;
+
+      if (data.status === "completed" || data.status === "error") {
+        document.getElementById("action-buttons").style.display = "flex";
+        document.getElementById("progress-bar").style.width = "100%";
+        if (data.status === "error") {
+          document.getElementById("stage-text").textContent = "Error: " + (data.message || "Unknown error");
+          document.getElementById("stage-text").style.color = "var(--red)";
+        }
+      } else {
+        setTimeout(poll, 2000);
+      }
+    })
+    .catch(() => setTimeout(poll, 3000));
+}
+
+{% if run.get('status') != 'completed' and run.get('status') != 'error' %}
+setTimeout(poll, 1000);
+{% else %}
+document.getElementById("action-buttons").style.display = "flex";
+document.getElementById("progress-bar").style.width = "100%";
+{% endif %}
+</script>
+{% endblock %}

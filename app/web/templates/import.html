@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Import List — MGR Advisory{% endblock %}
+{% block page_title %}Import List{% endblock %}
+
+{% block content %}
+{% if success is defined and success %}
+<div class="card" style="max-width:600px;margin:0 auto;background:var(--green-bg);border-color:var(--green);">
+  <h3 style="color:var(--green);">Import Successful</h3>
+  <p>Imported <strong>{{ count }}</strong> records from <strong>{{ filename }}</strong>.</p>
+  <a href="/results?status=" class="btn btn-sm mt-2">View Results</a>
+</div>
+{% endif %}
+
+<div class="card" style="max-width:600px;margin:0 auto;">
+  <h3>Upload Lead List</h3>
+  <p class="text-muted mb-4">Import CSV files from LinkedIn Sales Navigator, Apollo, or your own lists.</p>
+  <form method="post" action="/do-import" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>CSV File</label>
+      <input type="file" name="file" accept=".csv" required>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Import Type</label>
+        <select name="format_hint">
+          <option value="auto">Auto-detect</option>
+          <option value="linkedin_sales_navigator">LinkedIn Sales Navigator</option>
+          <option value="apollo">Apollo Export</option>
+          <option value="generic">Generic CSV</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Record Type</label>
+        <select name="record_type">
+          <option value="referral_partner">Referral Partner</option>
+          <option value="direct_prospect">Direct Prospect</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" name="category" value="imported" placeholder="e.g., imported, sba_lenders">
+    </div>
+    <button type="submit" class="btn btn-primary">Import File</button>
+  </form>
+</div>
+
+<div class="card" style="max-width:600px;margin:20px auto;">
+  <h3>Supported Formats</h3>
+  <table style="font-size:13px;">
+    <tr><td style="font-weight:600;">LinkedIn Sales Navigator</td><td>Columns: First Name, Last Name, Title, Company, LinkedIn URL, etc.</td></tr>
+    <tr><td style="font-weight:600;">Apollo</td><td>Columns: First Name, Last Name, Title, Company, Email, Phone, etc.</td></tr>
+    <tr><td style="font-weight:600;">Generic CSV</td><td>Columns: name, company, title, website, phone, email, city, state</td></tr>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Export Center — MGR Advisory{% endblock %}
+{% block page_title %}Export Center{% endblock %}
+
+{% block content %}
+<div class="stat-row">
+  <div class="stat-card green"><div class="number">{{ stats.get('accepted', 0) }}</div><div class="label">Accepted</div></div>
+  <div class="stat-card amber"><div class="number">{{ stats.get('review_needed', 0) }}</div><div class="label">Review</div></div>
+  <div class="stat-card"><div class="number">{{ stats.get('starred', 0) }}</div><div class="label">Starred</div></div>
+  <div class="stat-card"><div class="number">{{ stats.get('outreach', 0) }}</div><div class="label">Outreach</div></div>
+</div>
+
+<div class="card" style="max-width:600px;">
+  <h3>Download Leads</h3>
+  <form method="post" action="/do-export">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Format</label>
+        <select name="format">
+          <option value="excel">Excel (.xlsx) — Recommended</option>
+          <option value="csv">CSV (.csv)</option>
+          <option value="json">JSON (.json)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status Filter</label>
+        <select name="status">
+          <option value="">All Records</option>
+          <option value="accepted">Accepted Only</option>
+          <option value="review_needed">Review Queue Only</option>
+          <option value="rejected">Rejected Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category">
+          <option value="">All Categories</option>
+          {% for key, label in all_categories %}
+          <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Outreach Tier</label>
+        <select name="tier">
+          <option value="">All Tiers</option>
+          <option value="A">A-Tier Only</option>
+          <option value="B">B-Tier Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Minimum Score</label>
+      <input type="number" name="min_score" value="0" min="0" max="100">
+    </div>
+    <button type="submit" class="btn btn-primary">Download Export</button>
+  </form>
+</div>
+
+{% if runs %}
+<div class="card">
+  <h3>Export by Search Run</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Run</th><th>Category</th><th>Date</th><th>Accepted</th><th></th></tr></thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td>{{ run.geography }}</td>
+          <td>{{ run.category | replace('_', ' ') | title }}</td>
+          <td>{{ run.started_at[:16] if run.started_at else '' }}</td>
+          <td>{{ run.results_accepted }}</td>
+          <td><a href="/results?run_id={{ run.id }}&status=accepted" class="btn btn-sm">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

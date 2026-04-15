@@ -1,0 +1,1364 @@
+[
+  {
+    "company_name": "Summit SBA Lending Group",
+    "category": "sba_lender",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SBA preferred lender",
+      "10-50 employees",
+      "business acquisition loans"
+    ],
+    "misleading_signals": [
+      "also does consumer mortgages"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Cascade Business Finance",
+    "category": "sba_lender",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SBA 7(a) specialist",
+      "boutique lender",
+      "M&A financing"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Patriot Capital SBA",
+    "category": "sba_lender",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SBA certified",
+      "small business focus",
+      "acquisition financing"
+    ],
+    "misleading_signals": [
+      "has residential division"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Heritage SBA Partners",
+    "category": "sba_lender",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SBA preferred",
+      "boutique",
+      "owner-operated deals"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Pinnacle Business Credit",
+    "category": "sba_lender",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SBA 504 lender",
+      "commercial focus",
+      "SMB acquisitions"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Apex Business Brokers",
+    "category": "business_broker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "IBBA member",
+      "sell-side advisory",
+      "main street M&A"
+    ],
+    "misleading_signals": [
+      "lists some real estate"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "MainStreet Advisors LLC",
+    "category": "business_broker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "business sales",
+      "buyer representation",
+      "SMB focus"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Keystone Deal Makers",
+    "category": "business_broker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "business broker",
+      "confidential listings",
+      "SBA deal experience"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "BlueSky Business Sales",
+    "category": "business_broker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "IBBA certified",
+      "exit planning",
+      "owner transitions"
+    ],
+    "misleading_signals": [
+      "also does franchise consulting"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Ridgeline M&A Advisors",
+    "category": "business_broker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "lower middle market",
+      "business sales",
+      "succession planning"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Thornton & Walsh CPA",
+    "category": "boutique_cpa",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "boutique CPA",
+      "business owner clients",
+      "tax planning"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Greenfield Tax Advisory",
+    "category": "boutique_cpa",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "SMB tax",
+      "owner-operated clients",
+      "regional firm"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Blackwood Accounting Group",
+    "category": "boutique_cpa",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "small firm",
+      "business clients",
+      "closely-held companies"
+    ],
+    "misleading_signals": [
+      "some individual returns"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Silverstone CPA Partners",
+    "category": "boutique_cpa",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "boutique",
+      "business advisory",
+      "owner clients"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Coastal Tax & Advisory",
+    "category": "boutique_cpa",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "regional CPA",
+      "SMB focus",
+      "tax and advisory"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Harmon Business Law Group",
+    "category": "boutique_attorney",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "business transactions",
+      "M&A attorney",
+      "boutique firm"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Meridian Legal Partners",
+    "category": "boutique_attorney",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "corporate law",
+      "deal counsel",
+      "small firm"
+    ],
+    "misleading_signals": [
+      "some employment law"
+    ],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Clearwater Business Attorneys",
+    "category": "boutique_attorney",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "transactional law",
+      "business sales",
+      "boutique"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Stratford Wealth Advisors",
+    "category": "wealth_manager",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "independent RIA",
+      "business owner clients",
+      "liquidity events"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Northgate Private Wealth",
+    "category": "wealth_manager",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "boutique RIA",
+      "HNW business owners",
+      "exit planning"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Lakeview Capital Advisors",
+    "category": "wealth_manager",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "fee-only RIA",
+      "SMB owners",
+      "wealth management"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "First Community Business Bank",
+    "category": "commercial_banker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "community bank",
+      "business loans",
+      "SMB focus"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Riverside Commercial Lending",
+    "category": "commercial_banker",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "commercial banker",
+      "business owner relationships",
+      "local bank"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Summit Valuation Services",
+    "category": "valuation_advisor",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "business valuation",
+      "CVA certified",
+      "M&A advisory"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Precision Business Appraisals",
+    "category": "valuation_advisor",
+    "record_type": "ideal_referral_partner",
+    "why_good_fit": "Strong referral source with business-owner client base aligned with MGR Advisory services.",
+    "key_signals": [
+      "ASA certified",
+      "business appraisal",
+      "transaction support"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Chase Business Banking",
+    "category": "sba_lender",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "national bank",
+      "consumer focus",
+      "too large"
+    ],
+    "misleading_signals": [
+      "has SBA division"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Wells Fargo SBA Division",
+    "category": "sba_lender",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "national bank",
+      "mass market",
+      "no personal relationship"
+    ],
+    "misleading_signals": [
+      "SBA preferred lender"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Bank of America Small Business",
+    "category": "sba_lender",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "mega bank",
+      "product-push culture",
+      "no referral reciprocity"
+    ],
+    "misleading_signals": [
+      "SBA loans offered"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "PNC Business Credit",
+    "category": "commercial_banker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "large regional bank",
+      "impersonal",
+      "relationship manager turnover"
+    ],
+    "misleading_signals": [
+      "SMB focus advertised"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Deloitte Tax LLP",
+    "category": "boutique_cpa",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "Big 4",
+      "enterprise clients",
+      "no SMB referrals"
+    ],
+    "misleading_signals": [
+      "offers tax services"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "PwC Advisory",
+    "category": "boutique_cpa",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "Big 4",
+      "Fortune 500 focus",
+      "wrong client segment"
+    ],
+    "misleading_signals": [
+      "has advisory services"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Ernst & Young Assurance",
+    "category": "boutique_cpa",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "Big 4",
+      "public company audit",
+      "no SMB relationships"
+    ],
+    "misleading_signals": [
+      "CPA firm"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "KPMG Deal Advisory",
+    "category": "boutique_cpa",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "Big 4",
+      "large deal focus",
+      "minimum engagement size too high"
+    ],
+    "misleading_signals": [
+      "M&A advisory"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Morgan Stanley Wealth",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "wirehouse",
+      "product sales culture",
+      "no referral incentive"
+    ],
+    "misleading_signals": [
+      "serves HNW clients"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Merrill Lynch Wealth Management",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "wirehouse",
+      "AUM focus",
+      "no business advisory referrals"
+    ],
+    "misleading_signals": [
+      "business owner clients"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "UBS Financial Services",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "wirehouse",
+      "compliance-heavy",
+      "referral restrictions"
+    ],
+    "misleading_signals": [
+      "wealth management"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Edward Jones",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "retail brokerage",
+      "individual investor focus",
+      "wrong segment"
+    ],
+    "misleading_signals": [
+      "community presence"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Smith & Associates Injury Law",
+    "category": "boutique_attorney",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "personal injury",
+      "litigation focus",
+      "no business clients"
+    ],
+    "misleading_signals": [
+      "boutique law firm"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Peterson Divorce Attorneys",
+    "category": "boutique_attorney",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "family law",
+      "no business owners",
+      "wrong practice area"
+    ],
+    "misleading_signals": [
+      "local firm"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "National PI Law Group",
+    "category": "boutique_attorney",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "contingency fee",
+      "plaintiff litigation",
+      "no transactional work"
+    ],
+    "misleading_signals": [
+      "law firm"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "BigBox Business Brokers",
+    "category": "business_broker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "franchise broker",
+      "low-value transactions",
+      "no M&A sophistication"
+    ],
+    "misleading_signals": [
+      "business sales"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Global M&A Corp",
+    "category": "business_broker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "large deal focus",
+      "minimum $50M revenue",
+      "wrong deal size"
+    ],
+    "misleading_signals": [
+      "M&A advisory"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "RE/MAX Commercial",
+    "category": "business_broker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "real estate focus",
+      "not business sales",
+      "wrong specialty"
+    ],
+    "misleading_signals": [
+      "commercial listings"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Truist Bank Commercial",
+    "category": "commercial_banker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "large regional",
+      "high turnover",
+      "impersonal service"
+    ],
+    "misleading_signals": [
+      "business banking"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Fifth Third Business",
+    "category": "commercial_banker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "large bank",
+      "product-centric",
+      "no referral culture"
+    ],
+    "misleading_signals": [
+      "SMB services"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "H&R Block Business",
+    "category": "boutique_cpa",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "franchise tax prep",
+      "transactional model",
+      "no advisory relationships"
+    ],
+    "misleading_signals": [
+      "business tax returns"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Mass Mutual Financial",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "insurance sales",
+      "commission culture",
+      "product push"
+    ],
+    "misleading_signals": [
+      "financial planning"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Nationwide Financial Advisors",
+    "category": "wealth_manager",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "insurance-based",
+      "captive agents",
+      "wrong alignment"
+    ],
+    "misleading_signals": [
+      "financial advice"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Century 21 Commercial",
+    "category": "valuation_advisor",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "real estate brokerage",
+      "not business appraisal",
+      "wrong specialty"
+    ],
+    "misleading_signals": [
+      "commercial property"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Zillow Business Listings",
+    "category": "business_broker",
+    "record_type": "poor_referral_partner",
+    "why_poor_fit": "Not aligned with MGR Advisory referral model \u2014 wrong segment, size, or relationship type.",
+    "key_signals": [
+      "online marketplace",
+      "no relationship",
+      "wrong model"
+    ],
+    "misleading_signals": [
+      "business listings"
+    ],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Ironclad General Contractors",
+    "category": "construction",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "$5M-$50M revenue",
+      "owner-operated",
+      "established 10+ years"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Summit Excavation & Grading",
+    "category": "construction",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "specialty contractor",
+      "owner-run",
+      "profitable niche"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Pacific Mechanical Services",
+    "category": "construction",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "HVAC contractor",
+      "commercial focus",
+      "recurring revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Keystone Electrical Group",
+    "category": "construction",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "electrical contractor",
+      "owner nearing retirement",
+      "established"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Riverstone Plumbing Inc",
+    "category": "construction",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "plumbing contractor",
+      "commercial clients",
+      "10-50 employees"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Westside Orthopedic Associates",
+    "category": "healthcare",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "specialty practice",
+      "owner physician",
+      "profitable"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Lakeview Dental Group",
+    "category": "healthcare",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "multi-location dental",
+      "owner-operated",
+      "strong cash flow"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Summit Veterinary Clinic",
+    "category": "healthcare",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "veterinary practice",
+      "owner-operated",
+      "exit planning age"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Clearwater Physical Therapy",
+    "category": "healthcare",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "PT practice",
+      "owner nearing exit",
+      "recurring patients"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Heritage Chiropractic Center",
+    "category": "healthcare",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "established practice",
+      "owner-operated",
+      "stable revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Pinnacle Engineering Consultants",
+    "category": "professional_services",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "engineering firm",
+      "owner-operated",
+      "$5M+ revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Meridian IT Solutions",
+    "category": "professional_services",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "managed services",
+      "recurring revenue",
+      "owner-operated"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Stratford HR Consulting",
+    "category": "professional_services",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "HR outsourcing",
+      "SMB clients",
+      "owner-operated"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Apex Environmental Services",
+    "category": "professional_services",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "environmental consulting",
+      "specialized niche",
+      "owner-run"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Northgate Staffing Group",
+    "category": "professional_services",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "staffing firm",
+      "owner-operated",
+      "established"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Cascade Commercial Properties",
+    "category": "real_estate",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "commercial real estate",
+      "portfolio owner",
+      "multiple entities"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Summit Self-Storage LLC",
+    "category": "real_estate",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "self-storage operator",
+      "passive income",
+      "tax optimization need"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Riverside Apartment Group",
+    "category": "real_estate",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "multifamily owner",
+      "1031 exchange",
+      "depreciation planning"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Coastal Industrial Partners",
+    "category": "real_estate",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "industrial real estate",
+      "owner",
+      "complex tax needs"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Heartland Car Wash Group",
+    "category": "real_estate",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "car wash chain",
+      "real estate heavy",
+      "owner-operated"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Bluewave Digital Marketing",
+    "category": "agency",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "digital agency",
+      "owner-operated",
+      "$3M+ revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Ironwood Creative Agency",
+    "category": "agency",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "marketing agency",
+      "growing",
+      "owner considering exit"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Summit Media Group",
+    "category": "agency",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "media agency",
+      "owner-operated",
+      "recurring client retainers"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Clearwater PR & Communications",
+    "category": "agency",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "PR firm",
+      "boutique",
+      "owner-operated"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Pacific Growth Marketing",
+    "category": "agency",
+    "record_type": "ideal_direct_prospect",
+    "why_good_fit": "Owner-operated SMB with revenue scale and complexity suited for MGR Advisory tax and M&A services.",
+    "key_signals": [
+      "performance marketing",
+      "SaaS clients",
+      "owner-operated"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": true
+  },
+  {
+    "company_name": "Microsoft Corporation",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too large, public company with Big 4 auditors.",
+    "key_signals": [
+      "Fortune 500",
+      "public company",
+      "internal tax team"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Amazon Web Services",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Public mega-corp, wrong segment.",
+    "key_signals": [
+      "Fortune 500",
+      "public",
+      "no SMB fit"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Google LLC",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too large.",
+    "key_signals": [
+      "Fortune 500",
+      "public",
+      "internal finance team"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Apple Inc",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Public company.",
+    "key_signals": [
+      "Fortune 500",
+      "public",
+      "wrong segment"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Walmart Inc",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Wrong segment entirely.",
+    "key_signals": [
+      "Fortune 500",
+      "retail giant",
+      "public"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "TechStart AI Inc",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Pre-revenue startup, no tax complexity yet.",
+    "key_signals": [
+      "seed stage",
+      "pre-revenue",
+      "VC-backed"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "GreenLeaf Nonprofit",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Non-profit, no M&A or tax advisory need.",
+    "key_signals": [
+      "501(c)(3)",
+      "no profit motive",
+      "grant funded"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Community Food Bank",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Non-profit.",
+    "key_signals": [
+      "nonprofit",
+      "no revenue",
+      "donation funded"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "United Way Chapter",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Non-profit.",
+    "key_signals": [
+      "nonprofit",
+      "charity",
+      "no SMB profile"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Local Arts Council",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Non-profit.",
+    "key_signals": [
+      "nonprofit",
+      "grant funded",
+      "no commercial activity"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "John Smith Consulting",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too small, solopreneur.",
+    "key_signals": [
+      "solopreneur",
+      "1 employee",
+      "minimal revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Jane Doe Freelance Design",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too small.",
+    "key_signals": [
+      "freelancer",
+      "sole proprietor",
+      "no employees"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Bob's Lawn Care",
+    "category": "construction",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too small, no complexity.",
+    "key_signals": [
+      "micro business",
+      "1 person",
+      "cash basis"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Mary's Etsy Shop",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Not a real business.",
+    "key_signals": [
+      "hobby business",
+      "no employees",
+      "minimal revenue"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Tom's Mobile Car Wash",
+    "category": "construction",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too small.",
+    "key_signals": [
+      "micro business",
+      "cash only",
+      "1 employee"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Unicorn Health App",
+    "category": "healthcare",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Startup, no revenue.",
+    "key_signals": [
+      "VC-backed startup",
+      "pre-revenue",
+      "consumer app"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Series A SaaS Co",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Startup.",
+    "key_signals": [
+      "startup",
+      "burn rate",
+      "no profit"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Pre-seed Fintech",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Pre-revenue startup.",
+    "key_signals": [
+      "no revenue",
+      "angel funded",
+      "startup"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Beta Stage Marketplace",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Not operational.",
+    "key_signals": [
+      "pre-launch",
+      "no customers",
+      "startup"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "MVP Health Tech",
+    "category": "healthcare",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Startup.",
+    "key_signals": [
+      "startup",
+      "no revenue",
+      "seed stage"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "National Healthcare Corp",
+    "category": "healthcare",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too large, public.",
+    "key_signals": [
+      "Fortune 500",
+      "public",
+      "hospital system"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "Global Construction Partners",
+    "category": "construction",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too large.",
+    "key_signals": [
+      "ENR 500",
+      "public company",
+      "wrong segment"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "REIT Holdings Inc",
+    "category": "real_estate",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Public REIT, wrong profile.",
+    "key_signals": [
+      "public REIT",
+      "institutional",
+      "no owner-operator"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "National Staffing Corp",
+    "category": "professional_services",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "Too large, public.",
+    "key_signals": [
+      "public company",
+      "too large",
+      "national"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  },
+  {
+    "company_name": "BigAgency Holdings",
+    "category": "agency",
+    "record_type": "poor_direct_prospect",
+    "why_poor_fit": "PE-owned, no owner to advise.",
+    "key_signals": [
+      "holding company",
+      "private equity owned",
+      "no owner relationship"
+    ],
+    "misleading_signals": [],
+    "would_reach_out": false
+  }
+]

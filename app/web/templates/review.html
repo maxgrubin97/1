@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Review Queue — MGR Advisory{% endblock %}
+{% block page_title %}Review Queue{% endblock %}
+
+{% block content %}
+<!-- Summary -->
+<div class="stat-row">
+  <div class="stat-card amber"><div class="number">{{ stats.get('review_needed', 0) }}</div><div class="label">Total Review Items</div></div>
+  <div class="stat-card"><div class="number">{{ missing_contact }}</div><div class="label">Missing Contact</div></div>
+  <div class="stat-card"><div class="number">{{ conflicting }}</div><div class="label">Conflicting Evidence</div></div>
+  <div class="stat-card"><div class="number">{{ borderline }}</div><div class="label">Borderline Quality</div></div>
+</div>
+
+{% if leads %}
+<div class="card" style="padding:0;overflow:hidden;">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Category</th>
+          <th>Score</th>
+          <th>Missing / Issue</th>
+          <th>Suggested Next Step</th>
+          <th>Evidence For</th>
+          <th>Evidence Against</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        <tr>
+          <td>
+            <a href="/lead/{{ lead.id }}" style="font-weight:600;">{{ lead.company.name }}</a>
+            {% if lead.company.website_domain %}<br><span class="text-sm text-muted">{{ lead.company.website_domain }}</span>{% endif %}
+          </td>
+          <td><span class="badge badge-blue">{{ lead.category | replace('_', ' ') | title }}</span></td>
+          <td>{{ lead.qualification_score }}</td>
+          <td class="text-sm">
+            {% if not lead.has_decision_maker %}<span class="text-amber">No named contact</span><br>{% endif %}
+            {% for reason in lead.review_evidence_against[:2] %}
+            <span class="text-amber">{{ reason }}</span><br>
+            {% endfor %}
+          </td>
+          <td class="text-sm">{{ lead.review_suggested_next_step or 'Check website' }}</td>
+          <td class="text-sm text-green">{{ lead.score.reasons[:2] | join('; ') }}</td>
+          <td class="text-sm text-red">{{ lead.review_evidence_against[:2] | join('; ') }}</td>
+          <td>
+            <div class="btn-group" style="flex-direction:column;">
+              <form method="post" action="/lead/{{ lead.id }}/action"><input type="hidden" name="action" value="accept"><button type="submit" class="btn btn-sm btn-green">Accept</button></form>
+              <form method="post" action="/lead/{{ lead.id }}/action"><input type="hidden" name="action" value="reject"><button type="submit" class="btn btn-sm btn-red">Reject</button></form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="empty-state">
+  <h3>Review queue is empty</h3>
+  <p>No records need manual review. <a href="/">Run a search</a> to discover leads.</p>
+</div>
+{% endif %}
+{% endblock %}

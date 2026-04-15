@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Results — MGR Advisory{% endblock %}
+{% block page_title %}Results Explorer{% endblock %}
+
+{% block content %}
+<!-- Status Tabs -->
+<div class="tab-bar">
+  <a href="/results?status=accepted&category={{ current_category }}&run_id={{ current_run_id }}"
+     class="{% if current_status == 'accepted' %}active{% endif %}">Accepted</a>
+  <a href="/results?status=review_needed&category={{ current_category }}&run_id={{ current_run_id }}"
+     class="{% if current_status == 'review_needed' %}active{% endif %}">Needs Review</a>
+  <a href="/results?status=rejected&category={{ current_category }}&run_id={{ current_run_id }}"
+     class="{% if current_status == 'rejected' %}active{% endif %}">Rejected</a>
+  <a href="/results?status=&category={{ current_category }}&run_id={{ current_run_id }}"
+     class="{% if not current_status %}active{% endif %}">All</a>
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+  <form method="get" action="/results" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;width:100%;">
+    <input type="hidden" name="status" value="{{ current_status }}">
+    <input type="hidden" name="run_id" value="{{ current_run_id }}">
+    <select name="category">
+      <option value="">All Categories</option>
+      {% for key, label in all_categories %}
+      <option value="{{ key }}" {% if key == current_category %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="tier">
+      <option value="">All Tiers</option>
+      <option value="A" {% if current_tier == 'A' %}selected{% endif %}>A-Tier</option>
+      <option value="B" {% if current_tier == 'B' %}selected{% endif %}>B-Tier</option>
+      <option value="C" {% if current_tier == 'C' %}selected{% endif %}>C-Tier</option>
+    </select>
+    <select name="sort">
+      <option value="qualification_score" {% if current_sort == 'qualification_score' %}selected{% endif %}>Highest Score</option>
+      <option value="confidence_score" {% if current_sort == 'confidence_score' %}selected{% endif %}>Highest Confidence</option>
+      <option value="company_name" {% if current_sort == 'company_name' %}selected{% endif %}>Name A-Z</option>
+      <option value="created_at" {% if current_sort == 'created_at' %}selected{% endif %}>Most Recent</option>
+    </select>
+    <input type="text" name="search" value="{{ current_search }}" placeholder="Search..." style="width:160px;">
+    <input type="number" name="min_score" value="{{ current_min_score }}" placeholder="Min score" style="width:90px;" min="0" max="100">
+    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+  </form>
+</div>
+
+<!-- Results Count -->
+<p class="text-muted mb-4">{{ total }} results</p>
+
+{% if leads %}
+<!-- Results Table -->
+<div class="card" style="padding:0;overflow:hidden;">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Business Name</th>
+          <th>Contact</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Score</th>
+          <th>Confidence</th>
+          <th>Why It Fits</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        <tr class="{% if lead.outreach_priority_tier == 'A' %}tier-a{% elif lead.status == 'review_needed' %}review{% elif lead.status == 'rejected' %}rejected{% endif %}">
+          <td>
+            {% if lead.outreach_priority_tier %}
+            <span class="badge-tier {{ lead.outreach_priority_tier }}">{{ lead.outreach_priority_tier }}</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="/lead/{{ lead.id }}" style="font-weight:600;">{{ lead.company.name or '—' }}</a>
+            {% if lead.company.website %}<br><span class="text-sm text-muted">{{ lead.company.website_domain }}</span>{% endif %}
+          </td>
+          <td>{{ lead.primary_contact.name if lead.primary_contact else '—' }}</td>
+          <td class="text-sm">{{ lead.primary_contact.title if lead.primary_contact else '—' }}</td>
+          <td><span class="badge badge-blue">{{ lead.category | replace('_', ' ') | title }}</span></td>
+          <td class="text-sm">{{ lead.company.city }}{% if lead.company.state %}, {{ lead.company.state }}{% endif %}</td>
+          <td>
+            <div class="score-bar {% if lead.qualification_score >= 70 %}score-high{% elif lead.qualification_score >= 40 %}score-mid{% else %}score-low{% endif %}">
+              <span>{{ lead.qualification_score }}</span>
+              <div class="bar"><div class="bar-fill" style="width:{{ lead.qualification_score }}%"></div></div>
+            </div>
+          </td>
+          <td class="text-sm">{{ lead.confidence_score }}</td>
+          <td class="text-sm truncate" style="max-width:250px;">{{ lead.score.reasons[:2] | join(' · ') }}</td>
+          <td><a href="/lead/{{ lead.id }}" class="btn btn-sm">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination -->
+{% if total > per_page %}
+<div class="pagination">
+  {% if page_num > 1 %}
+  <a href="/results?status={{ current_status }}&category={{ current_category }}&tier={{ current_tier }}&sort={{ current_sort }}&search={{ current_search }}&min_score={{ current_min_score }}&run_id={{ current_run_id }}&page_num={{ page_num - 1 }}" class="btn btn-sm">&laquo; Prev</a>
+  {% endif %}
+  <span class="btn btn-sm" style="cursor:default;">Page {{ page_num }} of {{ ((total - 1) // per_page) + 1 }}</span>
+  {% if page_num * per_page < total %}
+  <a href="/results?status={{ current_status }}&category={{ current_category }}&tier={{ current_tier }}&sort={{ current_sort }}&search={{ current_search }}&min_score={{ current_min_score }}&run_id={{ current_run_id }}&page_num={{ page_num + 1 }}" class="btn btn-sm">Next &raquo;</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <h3>No results found</h3>
+  <p>Try adjusting your filters or <a href="/">run a new search</a>.</p>
+</div>
+{% endif %}
+{% endblock %}

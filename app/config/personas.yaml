@@ -1,0 +1,542 @@
+# Target Persona Matrix
+# Category-specific profiles with ideal traits, false positives, exclusions,
+# scoring sub-model weights, and recommended outreach angles.
+
+referral_partners:
+
+  sba_lenders:
+    ideal_firm_profile:
+      - "Community bank or regional bank with active SBA lending program"
+      - "SBA Preferred Lender Program (PLP) member"
+      - "Serves owner-operated small businesses in the $1M-$15M range"
+      - "Active in 7(a) and 504 lending"
+      - "Has dedicated SBA department or BDO"
+    ideal_contact_titles:
+      - "VP SBA Lending"
+      - "SBA Business Development Officer"
+      - "SVP Commercial Lending"
+      - "Relationship Manager"
+      - "VP Business Banking"
+      - "Commercial Loan Officer"
+      - "SBA Lending Manager"
+    common_false_positives:
+      - "Mortgage-only lenders"
+      - "Large national banks where SBA is a tiny division"
+      - "Online-only lenders with no local presence"
+      - "Equipment leasing companies (not SBA)"
+      - "Fintech lenders with no relationship model"
+    disqualifying_traits:
+      - "No evidence of SBA or small business lending"
+      - "Exclusively consumer banking"
+      - "No local market presence"
+      - "Only serves very large enterprises"
+    outreach_angle: >
+      Position as the fractional CFO who gets borrowers lender-ready:
+      clean financials, projections, cash flow analysis, and SBA packaging support.
+      You make their deals close faster and reduce their risk.
+    scoring_sub_model:
+      sba_lending_focus: 25
+      smb_client_base: 20
+      geography_fit: 15
+      seniority: 15
+      local_presence: 10
+      relationship_orientation: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "mortgage broker"
+      - "home loan"
+      - "auto financing"
+      - "student loans"
+      - "payday lending"
+
+  business_brokers:
+    ideal_firm_profile:
+      - "Sell-side main street or lower middle market business broker"
+      - "Handles deals in the $500K-$25M range"
+      - "Works with founder-owned / owner-operated businesses"
+      - "Boutique or small firm (not a massive franchise network)"
+      - "Active in tri-state or Northeast markets"
+    ideal_contact_titles:
+      - "Principal"
+      - "Founder"
+      - "Managing Director"
+      - "Senior Advisor"
+      - "Licensed Business Broker"
+      - "M&A Advisor"
+      - "Business Intermediary"
+      - "Partner"
+    common_false_positives:
+      - "Residential real estate agents"
+      - "Commercial real estate brokers (property, not businesses)"
+      - "Investment bankers serving only $100M+ deals"
+      - "Franchise consultants"
+    disqualifying_traits:
+      - "Only residential real estate"
+      - "Only institutional PE-backed deals"
+      - "No evidence of working with owner-operated businesses"
+      - "Exclusively franchise sales"
+    outreach_angle: >
+      Position as the CFO who makes businesses sale-ready: clean books,
+      normalized EBITDA, quality of earnings prep, cash flow documentation,
+      and buyer-ready financials. You increase deal value and close rates.
+    scoring_sub_model:
+      sell_side_smb_focus: 25
+      founder_owned_exposure: 20
+      principal_level_title: 15
+      geography_fit: 15
+      deal_size_fit: 10
+      local_market_activity: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "residential real estate"
+      - "commercial property"
+      - "land sales"
+      - "franchise consulting"
+
+  boutique_corporate_attorneys:
+    ideal_firm_profile:
+      - "Boutique or small/midsize firm (under 50 attorneys)"
+      - "Corporate, business, transactional, M&A, or commercial practice"
+      - "Serves owner-operated or founder-led businesses"
+      - "Handles entity formation, buy/sell, commercial contracts, or business acquisitions"
+      - "Not a massive Am Law firm"
+    ideal_contact_titles:
+      - "Partner"
+      - "Managing Partner"
+      - "Founding Partner"
+      - "Of Counsel"
+      - "Principal"
+      - "Senior Associate (only if small firm and practice area fits)"
+    common_false_positives:
+      - "Huge firms where business law is just one of 40 practice areas"
+      - "Attorneys who list 'corporate' but actually do mostly litigation"
+      - "Law firms primarily serving Fortune 500"
+      - "Broad-service firms without clear business/transactional focus"
+    disqualifying_traits:
+      - "personal injury"
+      - "criminal defense"
+      - "immigration"
+      - "matrimonial"
+      - "family law"
+      - "mass tort"
+      - "insurance defense only"
+      - "trusts and estates only"
+      - "DUI"
+      - "traffic violations"
+      - "workers compensation plaintiff"
+    outreach_angle: >
+      Position as the financial partner their clients need during transactions,
+      entity restructuring, or growth. You provide the CFO-level financial
+      diligence that complements their legal work on deals.
+    scoring_sub_model:
+      practice_area_fit: 25
+      boutique_size: 20
+      transactional_relevance: 15
+      partner_seniority: 15
+      geography_fit: 10
+      smb_client_evidence: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "personal injury"
+      - "criminal defense"
+      - "DUI"
+      - "immigration"
+      - "matrimonial"
+      - "family law"
+      - "mass tort"
+      - "insurance defense"
+      - "slip and fall"
+      - "medical malpractice plaintiff"
+      - "class action"
+      - "asbestos"
+
+  boutique_cpa_firms:
+    ideal_firm_profile:
+      - "Small to midsize CPA/tax firm (under 100 staff)"
+      - "Serves small business owners with tax, compliance, and basic advisory"
+      - "Does NOT heavily market fractional/outsourced CFO services"
+      - "Likely has clients who need more financial leadership than the CPA provides"
+    ideal_contact_titles:
+      - "Managing Partner"
+      - "Partner"
+      - "Founder"
+      - "Principal"
+      - "Director"
+      - "Tax Partner"
+    common_false_positives:
+      - "CPA firms that already offer outsourced CFO / virtual CFO services"
+      - "Big 4 or national firms (BDO, RSM, Grant Thornton)"
+      - "Firms that only do personal tax returns"
+      - "Bookkeeping-only firms with no advisory"
+    disqualifying_traits:
+      - "Big 4"
+      - "National firm with 500+ employees"
+      - "Heavily markets fractional CFO or outsourced CFO services"
+      - "Only personal tax preparation"
+    outreach_angle: >
+      Position as a complementary partner, not a competitor. You handle the
+      strategic CFO layer (forecasting, cash flow, KPIs, board reporting)
+      while they keep the tax and compliance work. Win-win referral.
+    scoring_sub_model:
+      smb_tax_advisory_focus: 20
+      non_competing_evidence: 20
+      boutique_size: 15
+      partner_seniority: 15
+      geography_fit: 10
+      business_client_evidence: 10
+      referral_orientation: 5
+      data_completeness: 5
+    exclusion_keywords:
+      - "outsourced CFO"
+      - "virtual CFO"
+      - "fractional CFO"
+      - "FP&A services"
+      - "fractional controller"
+      - "outsourced controller"
+      - "CFO services"
+      - "CFO advisory"
+      - "Big 4"
+      - "Deloitte"
+      - "PwC"
+      - "Ernst & Young"
+      - "KPMG"
+      - "Grant Thornton"
+      - "BDO"
+      - "RSM"
+    competition_risk_keywords:
+      - "outsourced CFO"
+      - "virtual CFO"
+      - "fractional CFO"
+      - "FP&A"
+      - "controller services"
+      - "financial advisory"
+
+  wealth_managers:
+    ideal_firm_profile:
+      - "RIA or independent wealth management firm"
+      - "Serves business owners, entrepreneurs, or founder-led families"
+      - "Focuses on liquidity events, exits, or concentrated business wealth"
+      - "Boutique or small firm, not a massive wirehouse"
+    ideal_contact_titles:
+      - "Managing Director"
+      - "Senior Wealth Advisor"
+      - "Partner"
+      - "Founder"
+      - "Principal"
+      - "Financial Advisor (if independent/RIA)"
+      - "Wealth Strategist"
+    common_false_positives:
+      - "Mass-market retail financial advisors"
+      - "Advisors focused entirely on retiree financial planning"
+      - "Insurance agents calling themselves wealth advisors"
+      - "Wirehouses (Merrill, Morgan Stanley, UBS) unless clearly SMB-focused"
+    disqualifying_traits:
+      - "Exclusively retiree/retirement planning"
+      - "Mass-market retail"
+      - "Only 401(k) plan administration"
+      - "No evidence of serving business owners"
+    outreach_angle: >
+      Position as the operational finance partner for their entrepreneur clients.
+      When their clients need a CFO to get financials in order before a liquidity
+      event, exit, or business transition, you are the resource.
+    scoring_sub_model:
+      entrepreneur_client_focus: 25
+      exit_liquidity_orientation: 20
+      boutique_independent: 15
+      seniority: 15
+      geography_fit: 10
+      business_owner_evidence: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "retirement planning only"
+      - "retirees"
+      - "senior living"
+      - "Medicare planning"
+      - "Social Security optimization"
+      - "401k administration only"
+      - "mass market"
+
+  commercial_bankers:
+    ideal_firm_profile:
+      - "Community bank or regional bank with SMB commercial lending"
+      - "Serves owner-operated businesses with credit facilities"
+      - "Has business banking division"
+    ideal_contact_titles:
+      - "VP Commercial Lending"
+      - "Relationship Manager"
+      - "Business Banking Officer"
+      - "SVP"
+      - "Commercial Loan Officer"
+    common_false_positives:
+      - "Consumer banking representatives"
+      - "Mortgage officers"
+      - "Large bank call center staff"
+    disqualifying_traits:
+      - "Consumer-only banking"
+      - "No commercial lending evidence"
+    outreach_angle: >
+      Complement their lending relationships. You prepare borrowers with
+      clean financials and ongoing reporting that protects the bank's position.
+    scoring_sub_model:
+      commercial_lending_focus: 25
+      smb_orientation: 20
+      geography_fit: 15
+      seniority: 15
+      local_presence: 10
+      relationship_model: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "mortgage only"
+      - "consumer banking"
+      - "retail banking"
+
+  valuation_exit_advisors:
+    ideal_firm_profile:
+      - "Business valuation firm or exit planning practice"
+      - "Serves privately held businesses"
+      - "Works with owners approaching transition, sale, or succession"
+    ideal_contact_titles:
+      - "Founder"
+      - "Managing Director"
+      - "Principal"
+      - "Senior Advisor"
+      - "Partner"
+      - "Accredited Senior Appraiser"
+      - "Certified Valuation Analyst"
+    common_false_positives:
+      - "Real estate appraisers"
+      - "Insurance adjusters"
+      - "Large consulting firms where valuation is minor"
+    disqualifying_traits:
+      - "Only real estate appraisal"
+      - "Only litigation support / expert witness"
+    outreach_angle: >
+      Position as the CFO who gets a business financially ready for valuation,
+      sale, or succession. Clean books, documented processes, and defensible
+      financials increase the owner's outcome.
+    scoring_sub_model:
+      business_valuation_focus: 25
+      privately_held_orientation: 20
+      exit_succession_evidence: 15
+      seniority: 15
+      geography_fit: 10
+      smb_deal_size: 10
+      data_completeness: 5
+    exclusion_keywords:
+      - "real estate appraisal"
+      - "residential appraisal"
+      - "insurance adjuster"
+
+direct_prospects:
+
+  construction_trades:
+    ideal_firm_profile:
+      - "Licensed general contractor or specialty trade contractor"
+      - "10-200 employees, multiple crews or project teams"
+      - "Handles commercial and/or large residential projects"
+      - "Likely uses job costing, bonding, or progress billing"
+      - "Revenue likely $1M-$15M+"
+    ideal_contact_titles:
+      - "Owner"
+      - "President"
+      - "Founder"
+      - "CEO"
+      - "General Manager"
+      - "VP Operations"
+    common_false_positives:
+      - "Solo handymen"
+      - "Very small one-truck operations"
+      - "Huge national contractors (Skanska, Turner, etc.)"
+    disqualifying_traits:
+      - "Solo operator with no employees"
+      - "National publicly traded contractor"
+      - "Obvious internal CFO/controller already in place"
+    outreach_angle: >
+      You bring financial visibility to project profitability, job costing,
+      cash flow forecasting, bonding capacity, and lender readiness.
+    scoring_sub_model:
+      operational_complexity: 25
+      likely_revenue_band: 20
+      buying_trigger_evidence: 15
+      owner_led_likelihood: 15
+      geography_fit: 10
+      employee_count_fit: 10
+      data_completeness: 5
+    complexity_signals:
+      - "job costing"
+      - "bonding"
+      - "prevailing wage"
+      - "union"
+      - "commercial projects"
+      - "multiple crews"
+      - "project management"
+      - "change orders"
+      - "progress billing"
+      - "retainage"
+      - "WIP"
+      - "fleet"
+
+  healthcare_practices:
+    ideal_firm_profile:
+      - "Multi-provider or multi-location healthcare practice"
+      - "Dental group, medical group, dermatology, PT, veterinary, urgent care"
+      - "Complex billing (insurance, reimbursement cycles)"
+      - "Revenue likely $1M-$10M+"
+      - "Owner-operated by physician/practitioner"
+    ideal_contact_titles:
+      - "Owner"
+      - "Founder"
+      - "Practice Administrator"
+      - "Managing Partner"
+      - "Medical Director (if also owner)"
+    common_false_positives:
+      - "Large hospital systems"
+      - "Solo practitioners with one location and low volume"
+      - "Healthcare IT companies (not practices)"
+    disqualifying_traits:
+      - "Hospital system or academic medical center"
+      - "Solo low-volume provider"
+      - "Already has CFO on staff"
+    outreach_angle: >
+      You bring financial clarity across multiple providers, insurance
+      reimbursement optimization, overhead analysis, and growth planning
+      for practice expansion.
+    scoring_sub_model:
+      operational_complexity: 25
+      likely_revenue_band: 20
+      multi_location_evidence: 15
+      owner_led_likelihood: 15
+      geography_fit: 10
+      buying_trigger_evidence: 10
+      data_completeness: 5
+
+  professional_services:
+    ideal_firm_profile:
+      - "Architecture, engineering, IT consulting, staffing, or similar firm"
+      - "Project-based or retainer-based revenue model"
+      - "10-100 employees"
+      - "Partner-led or founder-led"
+      - "Revenue likely $1M-$15M"
+    ideal_contact_titles:
+      - "Managing Partner"
+      - "Founder"
+      - "President"
+      - "CEO"
+      - "Principal"
+      - "Owner"
+    common_false_positives:
+      - "Large national consulting firms (McKinsey, Accenture)"
+      - "Individual freelancers calling themselves firms"
+      - "Firms with existing robust finance team"
+    disqualifying_traits:
+      - "Large national/global firm"
+      - "Solo freelancer"
+      - "Already has VP Finance or Controller"
+    outreach_angle: >
+      You bring financial structure to project profitability, utilization tracking,
+      cash flow forecasting, and growth planning.
+    scoring_sub_model:
+      operational_complexity: 25
+      likely_revenue_band: 20
+      buying_trigger_evidence: 15
+      owner_led_likelihood: 15
+      geography_fit: 10
+      employee_count_fit: 10
+      data_completeness: 5
+
+  real_estate_operations:
+    ideal_firm_profile:
+      - "Property management, real estate development, or RE investment firm"
+      - "Manages multiple properties or development projects"
+      - "Multi-entity structure likely"
+      - "Revenue likely $1M-$15M+"
+    ideal_contact_titles:
+      - "Owner"
+      - "Managing Partner"
+      - "Principal"
+      - "Founder"
+      - "President"
+    common_false_positives:
+      - "Individual real estate agents"
+      - "Large REITs"
+      - "Residential brokerages (Keller Williams, RE/MAX)"
+    disqualifying_traits:
+      - "Individual agent with no portfolio"
+      - "Publicly traded REIT"
+      - "Large institutional fund manager"
+    outreach_angle: >
+      You bring entity-level financial clarity, investor reporting,
+      development pro forma oversight, and lender compliance.
+    scoring_sub_model:
+      multi_entity_complexity: 25
+      likely_revenue_band: 20
+      owner_led_likelihood: 15
+      buying_trigger_evidence: 15
+      geography_fit: 10
+      portfolio_size_signals: 10
+      data_completeness: 5
+
+  agencies_consultancies:
+    ideal_firm_profile:
+      - "Marketing, digital, creative, PR, or consulting agency"
+      - "Boutique or mid-size (5-75 employees)"
+      - "Project-based or retainer revenue model"
+      - "Likely founder-led"
+    ideal_contact_titles:
+      - "Founder"
+      - "CEO"
+      - "Managing Director"
+      - "President"
+      - "Owner"
+      - "Partner"
+    common_false_positives:
+      - "Solo freelancers"
+      - "Huge global agencies (WPP, Omnicom)"
+      - "Internal marketing teams at companies"
+    disqualifying_traits:
+      - "Solo freelancer"
+      - "Large global agency network"
+      - "Already has finance team"
+    outreach_angle: >
+      You bring margin clarity, client profitability analysis, cash flow
+      management across retainer and project revenue, and scaling support.
+    scoring_sub_model:
+      operational_complexity: 25
+      likely_revenue_band: 20
+      buying_trigger_evidence: 15
+      owner_led_likelihood: 15
+      geography_fit: 10
+      employee_count_fit: 10
+      data_completeness: 5
+
+  multi_location_services:
+    ideal_firm_profile:
+      - "Multi-location or fleet-based service business"
+      - "Cleaning, landscaping, security, pest control, fitness, daycare, etc."
+      - "Multiple locations, employees, or service territories"
+      - "Revenue likely $1M-$10M+"
+    ideal_contact_titles:
+      - "Owner"
+      - "Founder"
+      - "President"
+      - "CEO"
+      - "General Manager"
+    common_false_positives:
+      - "Single-person operators"
+      - "National franchisors (not individual operators)"
+      - "Very small side businesses"
+    disqualifying_traits:
+      - "Solo operator"
+      - "National franchise corporate HQ"
+      - "Clearly under $500K revenue"
+    outreach_angle: >
+      You bring multi-location P&L management, fleet cost analysis,
+      labor cost optimization, and growth planning across territories.
+    scoring_sub_model:
+      multi_location_evidence: 25
+      likely_revenue_band: 20
+      operational_complexity: 15
+      owner_led_likelihood: 15
+      geography_fit: 10
+      buying_trigger_evidence: 10
+      data_completeness: 5

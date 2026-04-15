@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MGR Advisory Lead Engine{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <h2>MGR Advisory</h2>
+      <small>Lead Engine</small>
+    </div>
+    <nav>
+      <a href="/" class="{% if page == 'dashboard' %}active{% endif %}">
+        <span class="icon">&#9776;</span> Dashboard
+      </a>
+      <a href="/results?status=accepted" class="{% if page == 'results' %}active{% endif %}">
+        <span class="icon">&#9733;</span> Results
+      </a>
+      <a href="/review" class="{% if page == 'review' %}active{% endif %}">
+        <span class="icon">&#9888;</span> Review Queue
+      </a>
+      <a href="/import" class="{% if page == 'import' %}active{% endif %}">
+        <span class="icon">&#8679;</span> Import List
+      </a>
+      <a href="/export-center" class="{% if page == 'export' %}active{% endif %}">
+        <span class="icon">&#8681;</span> Export Center
+      </a>
+      <a href="/history" class="{% if page == 'history' %}active{% endif %}">
+        <span class="icon">&#8634;</span> Search History
+      </a>
+      <a href="/settings" class="{% if page == 'settings' %}active{% endif %}">
+        <span class="icon">&#9881;</span> Settings
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="topbar">
+      <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+      <div class="btn-group">
+        <a href="/export-center" class="btn btn-sm">Export</a>
+        <a href="/" class="btn btn-sm btn-primary">+ Run Search</a>
+      </div>
+    </div>
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

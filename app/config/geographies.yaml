@@ -1,0 +1,98 @@
+# Geography configuration for MGR Advisory lead engine.
+# Tier 1 locations are searched first. Expand to Tier 2+ with --expand flag.
+
+tiers:
+  tier_1:
+    label: "Core Markets"
+    locations:
+      - name: "Manhattan, NY"
+        aliases: ["New York, NY", "NYC", "Midtown Manhattan"]
+        county: "New York County"
+        state: "NY"
+      - name: "Brooklyn, NY"
+        aliases: ["Brooklyn"]
+        county: "Kings County"
+        state: "NY"
+      - name: "Queens, NY"
+        aliases: ["Queens"]
+        county: "Queens County"
+        state: "NY"
+      - name: "Nassau County, NY"
+        aliases: ["Garden City, NY", "Great Neck, NY", "Mineola, NY", "Hempstead, NY", "Rockville Centre, NY"]
+        county: "Nassau County"
+        state: "NY"
+      - name: "Suffolk County, NY"
+        aliases: ["Melville, NY", "Hauppauge, NY", "Huntington, NY", "Smithtown, NY", "Islip, NY", "Ronkonkoma, NY"]
+        county: "Suffolk County"
+        state: "NY"
+      - name: "Westchester, NY"
+        aliases: ["White Plains, NY", "Yonkers, NY", "New Rochelle, NY", "Tarrytown, NY", "Scarsdale, NY"]
+        county: "Westchester County"
+        state: "NY"
+
+  tier_2:
+    label: "Near Markets"
+    locations:
+      - name: "Jersey City, NJ"
+        aliases: ["Hoboken, NJ"]
+        county: "Hudson County"
+        state: "NJ"
+      - name: "Newark, NJ"
+        aliases: ["East Orange, NJ"]
+        county: "Essex County"
+        state: "NJ"
+      - name: "Morristown, NJ"
+        aliases: ["Parsippany, NJ"]
+        county: "Morris County"
+        state: "NJ"
+      - name: "Paramus, NJ"
+        aliases: ["Hackensack, NJ"]
+        county: "Bergen County"
+        state: "NJ"
+      - name: "Edison, NJ"
+        aliases: ["Woodbridge, NJ"]
+        county: "Middlesex County"
+        state: "NJ"
+      - name: "Stamford, CT"
+        aliases: ["Greenwich, CT", "Norwalk, CT", "Darien, CT"]
+        county: "Fairfield County"
+        state: "CT"
+      - name: "Hartford, CT"
+        aliases: ["West Hartford, CT"]
+        county: "Hartford County"
+        state: "CT"
+      - name: "New Haven, CT"
+        aliases: []
+        county: "New Haven County"
+        state: "CT"
+      - name: "Staten Island, NY"
+        aliases: []
+        county: "Richmond County"
+        state: "NY"
+      - name: "Bronx, NY"
+        aliases: []
+        county: "Bronx County"
+        state: "NY"
+
+  tier_3:
+    label: "Extended Northeast"
+    locations:
+      - name: "Princeton, NJ"
+        aliases: ["Trenton, NJ"]
+        county: "Mercer County"
+        state: "NJ"
+      - name: "Cherry Hill, NJ"
+        aliases: ["Mount Laurel, NJ"]
+        county: "Camden County"
+        state: "NJ"
+      - name: "Philadelphia, PA"
+        aliases: []
+        county: "Philadelphia County"
+        state: "PA"
+      - name: "Boston, MA"
+        aliases: []
+        county: "Suffolk County"
+        state: "MA"
+
+# Default search radius for Google Maps (meters)
+default_radius_meters: 40000

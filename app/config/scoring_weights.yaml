@@ -1,0 +1,80 @@
+# Scoring weight configuration for MGR Advisory lead engine.
+# All weights should sum to 100 within each category.
+# Each weight is the maximum points awardable for that dimension.
+
+direct_prospect:
+  geography_fit: 10
+  industry_fit: 15
+  company_size_fit: 15
+  financial_complexity: 20
+  buying_trigger_evidence: 15
+  owner_led_likelihood: 10
+  website_quality: 5
+  data_completeness: 5
+  contactability: 5
+
+referral_partner:
+  geography_fit: 10
+  category_fit: 15
+  seniority: 15
+  client_overlap: 20
+  boutique_fit: 10
+  referral_likelihood: 15
+  competition_risk_inverse: 5
+  data_completeness: 5
+  market_positioning: 5
+
+# Thresholds for automatic status assignment
+thresholds:
+  # Leads scoring >= this are auto-accepted
+  auto_accept_min: 70
+  # Leads scoring below this are auto-rejected
+  auto_reject_max: 30
+  # Confidence below this sends to review_needed regardless of score
+  confidence_floor: 40
+  # Records between reject and accept thresholds go to review_needed
+
+# Precision-first: default limit per category per geography
+default_limit_per_category_geo: 25
+
+# Noise control rules — encoded as hard filters
+noise_control:
+  # Never accept with only directory evidence (unless authoritative)
+  require_non_directory_evidence: true
+  authoritative_directories:
+    - "sba.gov"
+    - "finra.org"
+    - "sec.gov"
+    - "martindale.com"
+    - "avvo.com"
+
+  # Referral partners must have practice-area evidence
+  require_practice_area_evidence_for_referral: true
+
+  # Direct prospects need more than just geography + category
+  require_additional_signal_for_prospect: true
+
+  # Unclear size/market → review_needed
+  unclear_size_to_review: true
+
+  # Broad-service law firms without clear business practice → review_needed
+  broad_law_firm_to_review: true
+
+  # CPA firms offering CFO-like services → flag competition risk
+  cpa_cfo_competition_keywords:
+    - "outsourced CFO"
+    - "virtual CFO"
+    - "fractional CFO"
+    - "FP&A"
+    - "fractional controller"
+    - "outsourced controller"
+    - "CFO services"
+    - "CFO advisory"
+
+  # Wealth advisors focused on retirees → reject
+  wealth_retiree_reject_keywords:
+    - "retirement planning only"
+    - "retirees"
+    - "senior living"
+    - "Medicare planning"
+    - "Social Security"

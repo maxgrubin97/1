@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Settings — MGR Advisory{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;">
+  <!-- Scoring Weights -->
+  <div class="card">
+    <h3>Scoring Weights — Direct Prospects</h3>
+    <table style="font-size:13px;">
+      {% for key, val in scoring_weights.get('direct_prospect', {}).items() %}
+      <tr>
+        <td style="font-weight:600;">{{ key | replace('_', ' ') | title }}</td>
+        <td style="width:60px;text-align:right;">{{ val }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Scoring Weights — Referral Partners</h3>
+    <table style="font-size:13px;">
+      {% for key, val in scoring_weights.get('referral_partner', {}).items() %}
+      <tr>
+        <td style="font-weight:600;">{{ key | replace('_', ' ') | title }}</td>
+        <td style="width:60px;text-align:right;">{{ val }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- Thresholds -->
+  <div class="card">
+    <h3>Thresholds</h3>
+    <table style="font-size:13px;">
+      <tr><td style="font-weight:600;">Auto-Accept Minimum</td><td>{{ thresholds.get('auto_accept_min', 70) }}</td></tr>
+      <tr><td style="font-weight:600;">Auto-Reject Maximum</td><td>{{ thresholds.get('auto_reject_max', 30) }}</td></tr>
+      <tr><td style="font-weight:600;">Confidence Floor</td><td>{{ thresholds.get('confidence_floor', 40) }}</td></tr>
+      <tr><td style="font-weight:600;">Default Limit per Category/Geo</td><td>{{ thresholds.get('default_limit_per_category_geo', 25) }}</td></tr>
+    </table>
+  </div>
+
+  <!-- Geographies -->
+  <div class="card">
+    <h3>Tier 1 Geographies</h3>
+    <ul>
+      {% for loc in locations_t1 %}
+      <li>{{ loc }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Tier 2 Geographies</h3>
+    <ul>
+      {% for loc in locations_t2 %}
+      <li>{{ loc }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Noise Control -->
+  <div class="card">
+    <h3>Noise Control Rules</h3>
+    <table style="font-size:13px;">
+      {% for key, val in noise_control.items() %}
+      {% if val is string or val is number or val == true or val == false %}
+      <tr>
+        <td style="font-weight:600;">{{ key | replace('_', ' ') | title }}</td>
+        <td>{% if val == true %}Enabled{% elif val == false %}Disabled{% else %}{{ val }}{% endif %}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Configuration Files</h3>
+    <p class="text-muted">Edit these YAML files to change settings:</p>
+    <table style="font-size:13px;">
+      <tr><td style="font-weight:600;">Geographies</td><td><code>app/config/geographies.yaml</code></td></tr>
+      <tr><td style="font-weight:600;">Categories</td><td><code>app/config/categories.yaml</code></td></tr>
+      <tr><td style="font-weight:600;">Scoring Weights</td><td><code>app/config/scoring_weights.yaml</code></td></tr>
+      <tr><td style="font-weight:600;">Keywords</td><td><code>app/config/keywords.yaml</code></td></tr>
+      <tr><td style="font-weight:600;">Personas</td><td><code>app/config/personas.yaml</code></td></tr>
+      <tr><td style="font-weight:600;">Whitelist</td><td><code>data/always_include_domains.csv</code></td></tr>
+      <tr><td style="font-weight:600;">Blacklist</td><td><code>data/always_exclude_domains.csv</code></td></tr>
+      <tr><td style="font-weight:600;">Competitors</td><td><code>data/competitor_domains.csv</code></td></tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

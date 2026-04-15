@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Search History — MGR Advisory{% endblock %}
+{% block page_title %}Search History{% endblock %}
+
+{% block content %}
+{% if runs %}
+<div class="card" style="padding:0;overflow:hidden;">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Geography</th>
+          <th>Sources</th>
+          <th>Date</th>
+          <th>Found</th>
+          <th>Accepted</th>
+          <th>Review</th>
+          <th>Rejected</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td style="font-weight:600;">{{ run.category | replace('_', ' ') | title }}</td>
+          <td class="truncate">{{ run.geography }}</td>
+          <td class="text-sm">{{ run.source }}</td>
+          <td class="text-sm">{{ run.started_at[:16] if run.started_at else '' }}</td>
+          <td>{{ run.results_found }}</td>
+          <td><span class="badge badge-green">{{ run.results_accepted }}</span></td>
+          <td><span class="badge badge-amber">{{ run.results_review }}</span></td>
+          <td><span class="badge badge-red">{{ run.results_rejected }}</span></td>
+          <td><span class="badge {% if run.status == 'completed' %}badge-green{% else %}badge-amber{% endif %}">{{ run.status }}</span></td>
+          <td>
+            <div class="btn-group">
+              <a href="/results?run_id={{ run.id }}&status=accepted" class="btn btn-sm">View</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="empty-state">
+  <h3>No search history yet</h3>
+  <p><a href="/">Run your first search</a> to get started.</p>
+</div>
+{% endif %}
+{% endblock %}
