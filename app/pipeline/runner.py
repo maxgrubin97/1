@@ -262,6 +262,9 @@ class PipelineRunner:
             lead = classify_lead(lead, signals, self.settings)
             if lead.status != "rejected":
                 lead = score_lead(lead, signals, self.settings)
+            # Enrich review queue metadata for review_needed records
+            if lead.status == "review_needed":
+                _populate_review_metadata(lead)
             scored_leads.append(lead)
 
         # ============================================================
@@ -350,3 +353,64 @@ class PipelineRunner:
                 self._emit("discovering", f"Found {len(curated)} from curated lists")
 
         return leads
+
+
+def _populate_review_metadata(lead: LeadRecord):
+    """
+    Enrich review queue metadata for review_needed records.
+
+    Populates review_evidence_for, review_evidence_against, and
+    review_suggested_next_step based on the record's current state.
+    Sorts by: highest potential upside first, then easiest path to validation.
+    """
+    # Evidence FOR (why it might be good)
+    if lead.website_validated:
+        if "Website validates category fit" not in lead.review_evidence_for:
+            lead.review_evidence_for.append("Website validates category fit")
+    if lead.has_decision_maker:
+        if "Named decision-maker contact found" not in lead.review_evidence_for:
+            lead.review_evidence_for.append("Named decision-maker contact found")
+    if lead.has_corroboration:
+        if "Multiple sources corroborate identity" not in lead.review_evidence_for:
+            lead.review_evidence_for.append("Multiple sources corroborate identity")
+    if lead.qualification_score >= 50:
+        if "Qualification score above midpoint" not in lead.review_evidence_for:
+            lead.review_evidence_for.append(f"Qualification score: {lead.qualification_score}")
+    if lead.company.website:
+        if "Has website" not in lead.review_evidence_for:
+            lead.review_evidence_for.append("Has website")
+
+    # Evidence AGAINST (why it's in review, not accepted)
+    if not lead.website_validated:
+        msg = "Website not validated for category fit"
+        if msg not in lead.review_evidence_against:
+            lead.review_evidence_against.append(msg)
+    if not lead.has_decision_maker:
+        msg = "No named contact found"
+        if msg not in lead.review_evidence_against:
+            lead.review_evidence_against.append(msg)
+    if lead.source_tier_best == 3:
+        msg = "Only discovery-tier sources (no authoritative validation)"
+        if msg not in lead.review_evidence_against:
+            lead.review_evidence_against.append(msg)
+    if lead.competing_service_risk_score > 30:
+        msg = f"Possible competitor overlap (risk: {lead.competing_service_risk_score}%)"
+        if msg not in lead.review_evidence_against:
+            lead.review_evidence_against.append(msg)
+    if lead.primary_contact and lead.primary_contact.email_status == "guessed":
+        msg = "Only guessed email — not verified"
+        if msg not in lead.review_evidence_against:
+            lead.review_evidence_against.append(msg)
+
+    # Suggested next step — pick the most actionable
+    if not lead.review_suggested_next_step:
+        if not lead.company.website:
+            lead.review_suggested_next_step = "Find and verify company website"
+        elif not lead.website_validated:
+            lead.review_suggested_next_step = "Visit website to confirm category fit and services"
+        elif not lead.has_decision_maker:
+            lead.review_suggested_next_step = "Check team/about page for named contacts"
+        elif lead.competing_service_risk_score > 30:
+            lead.review_suggested_next_step = "Verify if competing services are major or minor offering"
+        else:
+            lead.review_suggested_next_step = "Review record manually for quality and fit"
